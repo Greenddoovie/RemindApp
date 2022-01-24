@@ -3,4 +3,6 @@
     <string name="title_home">Home</string>
     <string name="title_edit">Edit</string>
     <string name="title_notifications">Notifications</string>
+    <string name="main_fragment_toolbar_title">리마인드</string>
+    <string name="edit_fragment_toolbar_title">리마인더 설정</string>
 </resources>
