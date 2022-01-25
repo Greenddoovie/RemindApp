@@ -1,4 +1,4 @@
-package com.example.remindapp.model
+package com.example.remindapp.model.room
 
 data class Remind(
     val id: Int,

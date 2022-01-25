@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindapp.databinding.ItemRemindMainFragmentBinding
-import com.example.remindapp.model.Remind
+import com.example.remindapp.model.room.Remind
 
 class RemindAdapter : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

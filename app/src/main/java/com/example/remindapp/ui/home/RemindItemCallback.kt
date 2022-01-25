@@ -1,7 +1,7 @@
 package com.example.remindapp.ui.home
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.remindapp.model.Remind
+import com.example.remindapp.model.room.Remind
 
 class RemindItemCallback : DiffUtil.ItemCallback<Remind>() {
     override fun areItemsTheSame(oldItem: Remind, newItem: Remind): Boolean {
