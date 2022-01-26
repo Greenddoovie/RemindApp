@@ -51,7 +51,7 @@ class EditFragment : Fragment() {
     ): View {
         val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         editViewModel =
-            ViewModelProvider(this, EditViewModelFactory(repo)).get(EditViewModel::class.java)
+            ViewModelProvider(this, EditViewModel.EditViewModelFactory(repo)).get(EditViewModel::class.java)
 
         _binding = FragmentEditBinding.inflate(inflater, container, false)
         val root: View = binding.root
