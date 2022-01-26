@@ -15,7 +15,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.remindapp.databinding.FragmentEditBinding
+import com.example.remindapp.model.repository.RemindLocalDatasource
+import com.example.remindapp.model.repository.RemindRepository
+import com.example.remindapp.model.room.RemindDatabase
 
 class EditFragment : Fragment() {
 
@@ -45,8 +49,9 @@ class EditFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         editViewModel =
-            ViewModelProvider(this).get(EditViewModel::class.java)
+            ViewModelProvider(this, EditViewModelFactory(repo)).get(EditViewModel::class.java)
 
         _binding = FragmentEditBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -58,6 +63,7 @@ class EditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setTouchListener()
         setClickListener()
+        setObservers()
     }
 
     override fun onDestroyView() {
@@ -96,6 +102,12 @@ class EditFragment : Fragment() {
                     }
             }
         }
+    }
+
+    private fun setObservers() {
+        editViewModel.alarmSaved.observe(viewLifecycleOwner, { saved ->
+            if (saved) { findNavController().popBackStack() }
+        })
     }
 
     private fun hideKeyboard() {

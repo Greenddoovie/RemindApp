@@ -1,11 +1,15 @@
 package com.example.remindapp.model.room
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Remind(
-    val id: Int,
+    val title: String,
     val hour: Int,
     val minute: Int,
-    val title: String,
+    val uri: String,
     val active: Boolean
-)
-
-// 고려사항: time 저장 방법
+) {
+    @PrimaryKey(autoGenerate = true) var id: Int = 0
+}
