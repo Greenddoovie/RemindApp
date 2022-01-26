@@ -33,7 +33,7 @@ class RemindAdapter(
     }
 
     interface CheckBoxClickListener {
-        fun onClick(view: View) {}
+        fun onClick(view: View, item: Remind) {}
     }
 
     class RemindViewHolder(
@@ -47,7 +47,7 @@ class RemindAdapter(
                 clickListener.onClick(item.id)
             }
             binding.cbActive.setOnClickListener {
-                checkboxListener.onClick(binding.cbActive)
+                checkboxListener.onClick(binding.cbActive, item)
             }
         }
 

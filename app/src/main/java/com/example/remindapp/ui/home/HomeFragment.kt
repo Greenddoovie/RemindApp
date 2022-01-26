@@ -17,6 +17,7 @@ import com.example.remindapp.R
 import com.example.remindapp.databinding.FragmentHomeBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
+import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
 import com.example.remindapp.service.AlarmReceiver
 import com.example.remindapp.util.convertDateToMillis
@@ -54,7 +55,11 @@ class HomeFragment : Fragment() {
         setAdapters()
         setObservers()
         fetchRemindList()
-        getCurrentTime()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setAlarm()
     }
 
     override fun onDestroyView() {
@@ -78,13 +83,10 @@ class HomeFragment : Fragment() {
                 }
             },
             object: RemindAdapter.CheckBoxClickListener {
-                override fun onClick(view: View) {
+                override fun onClick(view: View, item: Remind) {
                     val tmpView = view as CheckBox
-                    if (tmpView.isChecked) {
-                       setAlarm()
-                    } else {
-                        cancelAlarm()
-                    }
+                    if (tmpView.isChecked) { setAlarm() } else { cancelAlarm() }
+                    homeViewModel.update(item, tmpView.isChecked)
                 }
             }
         )
@@ -106,7 +108,7 @@ class HomeFragment : Fragment() {
         if (remindList.isEmpty()) return
 
         val (currentHour, currentMin) = getCurrentTime().split(":").map { it.toInt() }
-        val filtered = remindList.filter { it.active }.filter { it.hour >= currentHour }.filter { it.minute >= currentMin }
+        val filtered = remindList.filter { it.active }.filter { it.hour >= currentHour }.filter { it.minute > currentMin }
         var dayPlus = false
         val target = if (filtered.isNullOrEmpty()) {
             dayPlus = true
@@ -139,6 +141,7 @@ class HomeFragment : Fragment() {
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
         pending?.cancel()
+        setAlarm()
     }
 
     companion object {
