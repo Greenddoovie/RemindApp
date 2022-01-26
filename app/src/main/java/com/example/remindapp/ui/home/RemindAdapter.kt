@@ -8,10 +8,11 @@ import com.example.remindapp.R
 import com.example.remindapp.databinding.ItemRemindMainFragmentBinding
 import com.example.remindapp.model.room.Remind
 
-class RemindAdapter : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCallback()) {
+class RemindAdapter(private val remindItemClickListener: RemindItemClickListener) : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return RemindViewHolder(
-            ItemRemindMainFragmentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemRemindMainFragmentBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            remindItemClickListener
         )
     }
 
@@ -21,10 +22,19 @@ class RemindAdapter : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCal
         }
     }
 
-    class RemindViewHolder(val binding: ItemRemindMainFragmentBinding) : RecyclerView.ViewHolder(binding.root) {
+    interface RemindItemClickListener {
+        fun onClick(position: Int) {}
+    }
+
+    class RemindViewHolder(
+        private val binding: ItemRemindMainFragmentBinding,
+        private val clickListener: RemindItemClickListener
+        ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-
+            binding.root.setOnClickListener{
+                clickListener.onClick(adapterPosition)
+            }
         }
 
         fun bind(item: Remind) {

@@ -64,6 +64,8 @@ class EditFragment : Fragment() {
         setTouchListener()
         setClickListener()
         setObservers()
+
+        val idx = arguments?.get("selection") // -1 이면 추가
     }
 
     override fun onDestroyView() {

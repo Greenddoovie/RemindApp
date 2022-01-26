@@ -7,14 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
 import com.example.remindapp.databinding.FragmentHomeBinding
+import com.example.remindapp.model.repository.RemindLocalDatasource
+import com.example.remindapp.model.repository.RemindRepository
+import com.example.remindapp.model.room.RemindDatabase
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
-    private val remindAdapter = RemindAdapter()
+    private lateinit var remindAdapter: RemindAdapter
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,8 +26,9 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(this, HomeViewModel.HomeViewModelFactory(repo)).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -35,6 +40,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setButtonClickListener()
         setAdapters()
+        setObservers()
+        fetchRemindList()
     }
 
     override fun onDestroyView() {
@@ -49,7 +56,24 @@ class HomeFragment : Fragment() {
     }
 
     private fun setAdapters() {
+        remindAdapter = RemindAdapter(object: RemindAdapter.RemindItemClickListener {
+            override fun onClick(position: Int) {
+                val bundle = Bundle()
+                bundle.putInt("selection", position)
+                findNavController().navigate(R.id.action_navigation_home_to_navigation_edit, bundle)
+            }
+        })
         binding.containerRemindItem.adapter = remindAdapter
+    }
+
+    private fun fetchRemindList() {
+        homeViewModel.fetchReminds()
+    }
+
+    private fun setObservers() {
+        homeViewModel.reminds.observe(viewLifecycleOwner, { reminds ->
+            remindAdapter.submitList(reminds)
+        })
     }
 
 }

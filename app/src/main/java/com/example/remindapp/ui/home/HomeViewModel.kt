@@ -1,13 +1,31 @@
 package com.example.remindapp.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.example.remindapp.model.repository.IRemindRepo
+import com.example.remindapp.model.repository.RemindRepository
+import com.example.remindapp.model.room.Remind
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    private var _reminds = MutableLiveData<List<Remind>>()
+    val reminds: LiveData<List<Remind>> get() = _reminds
+
+    fun fetchReminds() {
+        viewModelScope.launch {
+            val remindList = withContext(Dispatchers.IO) {
+                remindRepository.getAll()
+            }
+            _reminds.value = remindList
+        }
     }
-    val text: LiveData<String> = _text
+
+    class HomeViewModelFactory(private val remindRepository: RemindRepository) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return HomeViewModel(remindRepository) as T
+        }
+    }
+
 }
