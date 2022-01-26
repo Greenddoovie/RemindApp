@@ -57,9 +57,9 @@ class HomeFragment : Fragment() {
 
     private fun setAdapters() {
         remindAdapter = RemindAdapter(object: RemindAdapter.RemindItemClickListener {
-            override fun onClick(position: Int) {
+            override fun onClick(itemIdx: Int) {
                 val bundle = Bundle()
-                bundle.putInt("selection", position)
+                bundle.putInt("selection", itemIdx)
                 findNavController().navigate(R.id.action_navigation_home_to_navigation_edit, bundle)
             }
         })

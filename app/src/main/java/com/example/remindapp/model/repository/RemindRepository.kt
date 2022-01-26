@@ -15,4 +15,19 @@ class RemindRepository(private val remindLocalDatasource: IRemindRepo) : IRemind
         remindLocalDatasource.update(remind)
     }
 
+    override fun update(
+        title: String,
+        hour: Int,
+        minute: Int,
+        uri: String,
+        active: Boolean,
+        id: Int
+    ) {
+        remindLocalDatasource.update(title, hour, minute, uri, active, id)
+    }
+
+    override fun getRemind(idx: Int): Remind {
+        return remindLocalDatasource.getRemind(idx)
+    }
+
 }

@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -37,6 +38,7 @@ class EditFragment : Fragment() {
                 intent?: return@ActivityResultCallback
 
                 uri = intent.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                println("uri: $uri")
                 val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
                 binding.containerEditFragmentNotificationSong.tvEditFragmentNotificationSongTitle.text =
                     ringtone.getTitle(requireContext())
@@ -65,12 +67,17 @@ class EditFragment : Fragment() {
         setClickListener()
         setObservers()
 
-        val idx = arguments?.get("selection") // -1 이면 추가
+        val idx = arguments?.get("selection") as Int// -1 이면 추가
+        fetchRemind(idx)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun fetchRemind(idx: Int) {
+        editViewModel.fetchRemind(idx)
     }
 
     private fun setTouchListener() {
@@ -110,6 +117,19 @@ class EditFragment : Fragment() {
         editViewModel.alarmSaved.observe(viewLifecycleOwner, { saved ->
             if (saved) { findNavController().popBackStack() }
         })
+
+        editViewModel.remind.observe(viewLifecycleOwner, { remind ->
+            val tmpUri = run {
+                remind.uri.toUri().also { uri = it }
+            }
+            with(binding) {
+                etEditFragmentRemindTitle.setText(remind.title)
+                tpEditFragmentRemindTimeSelection.hour = remind.hour
+                tpEditFragmentRemindTimeSelection.minute = remind.minute
+                containerEditFragmentNotificationSong.tvEditFragmentNotificationSongTitle.text =
+                    getTitleFromUri(tmpUri)
+            }
+        })
     }
 
     private fun hideKeyboard() {
@@ -121,5 +141,10 @@ class EditFragment : Fragment() {
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
         }
+    }
+
+    private fun getTitleFromUri(uri: Uri): String {
+        val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
+        return ringtone.getTitle(requireContext())
     }
 }

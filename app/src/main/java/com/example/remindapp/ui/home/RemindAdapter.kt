@@ -23,21 +23,22 @@ class RemindAdapter(private val remindItemClickListener: RemindItemClickListener
     }
 
     interface RemindItemClickListener {
-        fun onClick(position: Int) {}
+        fun onClick(itemIdx: Int) {}
     }
 
     class RemindViewHolder(
         private val binding: ItemRemindMainFragmentBinding,
         private val clickListener: RemindItemClickListener
         ) : RecyclerView.ViewHolder(binding.root) {
-
+        lateinit var item: Remind
         init {
             binding.root.setOnClickListener{
-                clickListener.onClick(adapterPosition)
+                clickListener.onClick(item.id)
             }
         }
 
         fun bind(item: Remind) {
+            this.item = item
             with(binding) {
                 tvTime.text =
                     itemView.context.getString(R.string.main_fragment_item_time, item.hour, item.minute)

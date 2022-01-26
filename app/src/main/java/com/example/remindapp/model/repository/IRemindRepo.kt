@@ -7,5 +7,7 @@ interface IRemindRepo {
     fun getAll(): List<Remind>
     fun insert(remind: Remind)
     fun update(remind: Remind)
+    fun update(title: String, hour: Int, minute: Int, uri: String, active: Boolean, id: Int)
+    fun getRemind(idx: Int): Remind
 
 }

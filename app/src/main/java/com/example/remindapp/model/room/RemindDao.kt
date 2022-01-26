@@ -15,4 +15,10 @@ interface RemindDao {
 
     @Query("SELECT * FROM Remind")
     fun getAll(): List<Remind>
+
+    @Query("SELECT * FROM Remind WHERE id = :idx")
+    fun getRemind(idx: Int): Remind
+
+    @Query("UPDATE Remind SET title = :title, hour = :hour, minute = :minute, uri = :uri, active = :active WHERE id = :id ")
+    fun update(title: String, hour: Int, minute: Int, uri: String, active: Boolean, id: Int)
 }
