@@ -6,4 +6,11 @@
     <string name="main_fragment_toolbar_title">리마인드</string>
     <string name="edit_fragment_toolbar_title">리마인더 설정</string>
     <string name="main_fragment_add_remind">리마인더 추가</string>
+    <string name="edit_fragment_remind">리마인드 이름</string>
+    <string name="edit_fragment_remind_title_hint">Please enter a name of remind</string>
+    <string name="edit_fragment_time">시간 설정</string>
+    <string name="edit_fragment_notification_song">벨소리</string>
+    <string name="edit_fragment_save_remind">Save</string>
+    <string name="edit_fragment_notification_song_drawable_description">벨소리 그림</string>
+    <string name="edit_fragment_notification_song_selection_button">Select song list</string>
 </resources>
