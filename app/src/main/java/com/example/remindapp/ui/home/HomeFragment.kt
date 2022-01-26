@@ -19,13 +19,11 @@ import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.service.AlarmReceiver
+import com.example.remindapp.component.AlarmReceiver
 import com.example.remindapp.util.convertDateToMillis
 import com.example.remindapp.util.getCurrentDay
 import com.example.remindapp.util.getCurrentTime
 import com.example.remindapp.util.getTargetTime
-import java.text.SimpleDateFormat
-import java.util.*
 
 class HomeFragment : Fragment() {
 

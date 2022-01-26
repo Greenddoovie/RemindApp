@@ -1,4 +1,4 @@
-package com.example.remindapp.service
+package com.example.remindapp.component
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
