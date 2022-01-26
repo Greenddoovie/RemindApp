@@ -18,7 +18,7 @@ class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
             val remindList = withContext(Dispatchers.IO) {
                 remindRepository.getAll()
             }
-            _reminds.value = remindList
+            _reminds.value = remindList.sortedWith(compareBy( {it.hour}, {it.minute}))
         }
     }
 
