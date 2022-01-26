@@ -1,18 +1,24 @@
 package com.example.remindapp.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindapp.R
 import com.example.remindapp.databinding.ItemRemindMainFragmentBinding
 import com.example.remindapp.model.room.Remind
 
-class RemindAdapter(private val remindItemClickListener: RemindItemClickListener) : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCallback()) {
+class RemindAdapter(
+    private val remindItemClickListener: RemindItemClickListener,
+    private val checkboxListener: CheckBoxClickListener
+) : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return RemindViewHolder(
             ItemRemindMainFragmentBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            remindItemClickListener
+            remindItemClickListener,
+            checkboxListener
         )
     }
 
@@ -26,14 +32,22 @@ class RemindAdapter(private val remindItemClickListener: RemindItemClickListener
         fun onClick(itemIdx: Int) {}
     }
 
+    interface CheckBoxClickListener {
+        fun onClick(view: View) {}
+    }
+
     class RemindViewHolder(
         private val binding: ItemRemindMainFragmentBinding,
-        private val clickListener: RemindItemClickListener
+        private val clickListener: RemindItemClickListener,
+        private val checkboxListener: CheckBoxClickListener
         ) : RecyclerView.ViewHolder(binding.root) {
         lateinit var item: Remind
         init {
             binding.root.setOnClickListener{
                 clickListener.onClick(item.id)
+            }
+            binding.cbActive.setOnClickListener {
+                checkboxListener.onClick(binding.cbActive)
             }
         }
 

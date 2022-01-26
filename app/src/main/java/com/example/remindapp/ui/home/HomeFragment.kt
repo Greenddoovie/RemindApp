@@ -1,9 +1,14 @@
 package com.example.remindapp.ui.home
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -13,6 +18,13 @@ import com.example.remindapp.databinding.FragmentHomeBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
+import com.example.remindapp.service.AlarmReceiver
+import com.example.remindapp.util.convertDateToMillis
+import com.example.remindapp.util.getCurrentDay
+import com.example.remindapp.util.getCurrentTime
+import com.example.remindapp.util.getTargetTime
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -42,6 +54,7 @@ class HomeFragment : Fragment() {
         setAdapters()
         setObservers()
         fetchRemindList()
+        getCurrentTime()
     }
 
     override fun onDestroyView() {
@@ -56,13 +69,25 @@ class HomeFragment : Fragment() {
     }
 
     private fun setAdapters() {
-        remindAdapter = RemindAdapter(object: RemindAdapter.RemindItemClickListener {
-            override fun onClick(itemIdx: Int) {
-                val bundle = Bundle()
-                bundle.putInt("selection", itemIdx)
-                findNavController().navigate(R.id.action_navigation_home_to_navigation_edit, bundle)
+        remindAdapter = RemindAdapter(
+            object: RemindAdapter.RemindItemClickListener {
+                override fun onClick(itemIdx: Int) {
+                    val bundle = Bundle()
+                    bundle.putInt("selection", itemIdx)
+                    findNavController().navigate(R.id.action_navigation_home_to_navigation_edit, bundle)
+                }
+            },
+            object: RemindAdapter.CheckBoxClickListener {
+                override fun onClick(view: View) {
+                    val tmpView = view as CheckBox
+                    if (tmpView.isChecked) {
+                       setAlarm()
+                    } else {
+                        cancelAlarm()
+                    }
+                }
             }
-        })
+        )
         binding.containerRemindItem.adapter = remindAdapter
     }
 
@@ -74,6 +99,50 @@ class HomeFragment : Fragment() {
         homeViewModel.reminds.observe(viewLifecycleOwner, { reminds ->
             remindAdapter.submitList(reminds)
         })
+    }
+
+    private fun setAlarm() {
+        val remindList = homeViewModel.reminds.value ?: return
+        if (remindList.isEmpty()) return
+
+        val (currentHour, currentMin) = getCurrentTime().split(":").map { it.toInt() }
+        val filtered = remindList.filter { it.active }.filter { it.hour >= currentHour }.filter { it.minute >= currentMin }
+        var dayPlus = false
+        val target = if (filtered.isNullOrEmpty()) {
+            dayPlus = true
+            remindList.first { it.active }
+        } else {
+            filtered.first()
+        }
+
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        val pending = PendingIntent.getBroadcast(
+            requireContext(),
+            ALARM_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val millisStr = "${getCurrentDay()} ${getTargetTime(target.hour, target.minute)}"
+        val curMillis = convertDateToMillis(millisStr, dayPlus)
+
+        if (curMillis == -1L) return
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, curMillis, pending)
+    }
+
+    private fun cancelAlarm() {
+        val pending = PendingIntent.getBroadcast(
+            requireContext(),
+            ALARM_REQUEST_CODE,
+            Intent(requireContext(), AlarmReceiver::class.java),
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        pending?.cancel()
+    }
+
+    companion object {
+        const val ALARM_REQUEST_CODE = 10001
     }
 
 }
