@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.remindapp.R
 import com.example.remindapp.databinding.ItemRemindMainFragmentBinding
 import com.example.remindapp.model.room.Remind
 
@@ -27,9 +28,12 @@ class RemindAdapter : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCal
         }
 
         fun bind(item: Remind) {
-            binding.tvTime.text = item.time.toString()
-            binding.tvTitle.text = item.title
-            binding.cbActive.isChecked = item.active
+            with(binding) {
+                tvTime.text =
+                    itemView.context.getString(R.string.main_fragment_item_time, item.hour, item.minute)
+                tvTitle.text = item.title
+                cbActive.isChecked = item.active
+            }
         }
     }
 }

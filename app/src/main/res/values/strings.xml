@@ -13,4 +13,6 @@
     <string name="edit_fragment_save_remind">Save</string>
     <string name="edit_fragment_notification_song_drawable_description">벨소리 그림</string>
     <string name="edit_fragment_notification_song_selection_button">Select song list</string>
+    <string name="edit_fragment_notification_song_title_hint">Select ringtone</string>
+    <string name="main_fragment_item_time">%1$d:%2$d</string>
 </resources>

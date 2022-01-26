@@ -1,29 +1,51 @@
 package com.example.remindapp.ui.edit
 
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindapp.databinding.FragmentEditBinding
-import com.example.remindapp.ui.Edit.EditViewModel
 
 class EditFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: EditViewModel
+    private lateinit var editViewModel: EditViewModel
     private var _binding: FragmentEditBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private var uri: Uri? = null
+    private val ringtoneCallback = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+        ActivityResultCallback { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                val intent = result.data
+                intent?: return@ActivityResultCallback
+
+                uri = intent.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
+                binding.containerEditFragmentNotificationSong.tvEditFragmentNotificationSongTitle.text =
+                    ringtone.getTitle(requireContext())
+            }
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        dashboardViewModel =
+        editViewModel =
             ViewModelProvider(this).get(EditViewModel::class.java)
 
         _binding = FragmentEditBinding.inflate(inflater, container, false)
@@ -32,8 +54,58 @@ class EditFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setTouchListener()
+        setClickListener()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setTouchListener() {
+        binding.root.setOnTouchListener { _, _ ->
+            hideKeyboard()
+            false
+        }
+    }
+
+    private fun setClickListener() {
+        binding.containerEditFragmentNotificationSong.root.setOnClickListener{
+            val ringtoneIntent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+            }
+            ringtoneCallback.launch(ringtoneIntent)
+        }
+
+        binding.btEditFragmentSaveRemind.setOnClickListener {
+            with(binding) {
+                if (etEditFragmentRemindTitle.text.toString() == "") {
+                    Toast.makeText(requireContext(), "Fill title", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val hour = tpEditFragmentRemindTimeSelection.hour
+                val minute = tpEditFragmentRemindTimeSelection.minute
+                val title = etEditFragmentRemindTitle.text.toString()
+                uri?.let { editViewModel.saveAlarm(title, uri.toString(), hour, minute) }
+                    ?: run {
+                        Toast.makeText(requireContext(), "Select ringtone", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
+    }
+
+    private fun hideKeyboard() {
+        if (activity != null && requireActivity().currentFocus != null) {
+            val inputManager: InputMethodManager =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(
+                requireActivity().currentFocus!!.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
+        }
     }
 }

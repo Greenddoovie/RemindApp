@@ -2,7 +2,8 @@ package com.example.remindapp.model.room
 
 data class Remind(
     val id: Int,
-    val time: Int,
+    val hour: Int,
+    val minute: Int,
     val title: String,
     val active: Boolean
 )

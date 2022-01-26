@@ -22,10 +22,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:textSize="14sp"
         android:layout_marginStart="8dp"
+        android:hint="@string/edit_fragment_notification_song_title_hint"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tv_edit_fragment_notification_song_subtitle"
-        app:layout_constraintEnd_toStartOf="@id/iv_notification_song" />
+        app:layout_constraintStart_toEndOf="@id/iv_notification_song" />
 
     <TextView
         android:id="@+id/tv_edit_fragment_notification_song_subtitle"
