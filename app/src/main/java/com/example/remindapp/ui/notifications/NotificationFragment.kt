@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.remindapp.R
 import com.example.remindapp.databinding.FragmentNotificationsBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
@@ -18,8 +19,6 @@ class NotificationFragment : Fragment() {
     private lateinit var notificationViewModel: NotificationViewModel
     private var _binding: FragmentNotificationsBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -30,23 +29,43 @@ class NotificationFragment : Fragment() {
         val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         notificationViewModel =
             ViewModelProvider(this, NotificationViewModel.NotificationViewModelFactory(repo)).get(NotificationViewModel::class.java)
-
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
-        notificationViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = arguments?.get("remindIdx")
+
+        setObserver()
+
+        val id = arguments?.get("remindIdx") as Int
+        if (id != -1) { fetchRemind(id) }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun fetchRemind(id: Int) {
+        notificationViewModel.fetchRemind(id)
+    }
+
+    private fun setObserver() {
+        notificationViewModel.remind.observe(viewLifecycleOwner, { remind ->
+            binding.tvNotiFragmentTitle.text = remind.title
+            binding.tvNotiFragmentTime.text = getString(R.string.display_time, remind.hour, remind.minute)
+        })
+    }
+
+    private fun setClickListener() {
+        binding.btNotiFragmentDismiss.setOnClickListener {
+
+        }
+    }
+
+    private fun bindService() {
+
     }
 }

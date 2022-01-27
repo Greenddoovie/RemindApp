@@ -3,7 +3,6 @@ package com.example.remindapp.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindapp.R
@@ -55,7 +54,7 @@ class RemindAdapter(
             this.item = item
             with(binding) {
                 tvTime.text =
-                    itemView.context.getString(R.string.main_fragment_item_time, item.hour, item.minute)
+                    itemView.context.getString(R.string.display_time, item.hour, item.minute)
                 tvTitle.text = item.title
                 cbActive.isChecked = item.active
             }
