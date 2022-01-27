@@ -118,6 +118,7 @@ class HomeFragment : Fragment() {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        intent.putExtra("remindIdx", target.id)
         val pending = PendingIntent.getBroadcast(
             requireContext(),
             ALARM_REQUEST_CODE,
