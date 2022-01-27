@@ -14,12 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
+import com.example.remindapp.component.AlarmReceiver
 import com.example.remindapp.databinding.FragmentHomeBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.component.AlarmReceiver
 import com.example.remindapp.util.convertDateToMillis
 import com.example.remindapp.util.getCurrentDay
 import com.example.remindapp.util.getCurrentTime
