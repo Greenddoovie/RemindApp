@@ -55,11 +55,6 @@ class HomeFragment : Fragment() {
         fetchRemindList()
     }
 
-    override fun onStart() {
-        super.onStart()
-        setAlarm()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -98,6 +93,7 @@ class HomeFragment : Fragment() {
     private fun setObservers() {
         homeViewModel.reminds.observe(viewLifecycleOwner, { reminds ->
             remindAdapter.submitList(reminds)
+            setAlarm()
         })
     }
 
@@ -110,10 +106,12 @@ class HomeFragment : Fragment() {
         var dayPlus = false
         val target = if (filtered.isNullOrEmpty()) {
             dayPlus = true
-            remindList.first { it.active }
+            remindList.firstOrNull { it.active }
         } else {
-            filtered.first()
+            filtered.firstOrNull()
         }
+
+        if (target == null) return
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
