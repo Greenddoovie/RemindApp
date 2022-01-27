@@ -35,11 +35,13 @@
             android:id="@+id/bt_add_remind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:drawableStart="@drawable/plus_24"
             android:text="@string/main_fragment_add_remind"
             android:onClick="@{() -> fragment.clickRemindButton()}"
+            android:background="@drawable/button_remind_add_background"
             app:layout_constraintTop_toBottomOf="@id/container_edit_toolbar" />
 
         <androidx.recyclerview.widget.RecyclerView

@@ -71,6 +71,7 @@
 
         <TimePicker
             android:id="@+id/tp_edit_fragment_remind_time_selection"
+            android:background="@drawable/remind_item_background"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
