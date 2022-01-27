@@ -9,9 +9,7 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
@@ -39,7 +37,6 @@ class NotificationFragment : Fragment() {
         override fun onServiceDisconnected(name: ComponentName?) {
             bound = false
         }
-
     }
 
     override fun onCreateView(
@@ -47,9 +44,12 @@ class NotificationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
+        val repo =
+            RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         notificationViewModel =
-            ViewModelProvider(this, NotificationViewModel.NotificationViewModelFactory(repo)).get(NotificationViewModel::class.java)
+            ViewModelProvider(this, NotificationViewModel.NotificationViewModelFactory(repo)).get(
+                NotificationViewModel::class.java
+            )
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -62,7 +62,9 @@ class NotificationFragment : Fragment() {
         setClickListener()
 
         val id = arguments?.get("remindIdx") as Int
-        if (id != -1) { fetchRemind(id) }
+        if (id != -1) {
+            fetchRemind(id)
+        }
     }
 
     override fun onStart() {
@@ -87,14 +89,17 @@ class NotificationFragment : Fragment() {
     private fun setObserver() {
         notificationViewModel.remind.observe(viewLifecycleOwner, { remind ->
             binding.tvNotiFragmentTitle.text = remind.title
-            binding.tvNotiFragmentTime.text = getString(R.string.display_time, remind.hour, remind.minute)
+            binding.tvNotiFragmentTime.text =
+                getString(R.string.display_time, remind.hour, remind.minute)
         })
     }
 
     private fun setClickListener() {
         binding.btNotiFragmentDismiss.setOnClickListener {
-            alarmService.stopService()
-            notificationViewModel.update()
+            if (bound) {
+                alarmService.stopService()
+                notificationViewModel.update()
+            }
             findNavController().popBackStack()
         }
     }
