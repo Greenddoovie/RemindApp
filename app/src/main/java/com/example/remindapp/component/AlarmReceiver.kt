@@ -14,12 +14,8 @@ class AlarmReceiver : BroadcastReceiver() {
                 putExtra("alarm", "on")
                 putExtra("remindIdx", remindIdx as Int)
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                it.startForegroundService(serviceIntent)
-            } else {
-                it.startService(serviceIntent)
-            }
 
+            it.startService(serviceIntent)
         }
     }
 }
