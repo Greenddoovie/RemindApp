@@ -34,6 +34,7 @@ class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
                     item.id
                 )
             }
+            fetchReminds()
         }
     }
 
