@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.example.remindapp.model.room.RemindDatabase
 
 class NotificationFragment : Fragment() {
 
+    private lateinit var callback: OnBackPressedCallback
     private lateinit var notificationViewModel: NotificationViewModel
     private var bound: Boolean = false
     private var _binding: FragmentNotificationsBinding? = null
@@ -80,6 +82,21 @@ class NotificationFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                dismissOnClick()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
     }
 
     fun dismissOnClick() {
