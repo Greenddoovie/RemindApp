@@ -13,9 +13,9 @@ import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
 
-class NotificationsFragment : Fragment() {
+class NotificationFragment : Fragment() {
 
-    private lateinit var notificationsViewModel: NotificationsViewModel
+    private lateinit var notificationViewModel: NotificationViewModel
     private var _binding: FragmentNotificationsBinding? = null
 
     // This property is only valid between onCreateView and
@@ -28,14 +28,14 @@ class NotificationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
-        notificationsViewModel =
-            ViewModelProvider(this, NotificationsViewModel.NotiViewModelFactory(repo)).get(NotificationsViewModel::class.java)
+        notificationViewModel =
+            ViewModelProvider(this, NotificationViewModel.NotificationViewModelFactory(repo)).get(NotificationViewModel::class.java)
 
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner, Observer {
+        notificationViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root

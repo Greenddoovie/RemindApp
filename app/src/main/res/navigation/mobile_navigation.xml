@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.remindapp.ui.notifications.NotificationsFragment"
+        android:name="com.example.remindapp.ui.notifications.NotificationFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications">
 
