@@ -68,9 +68,4 @@ class AlarmService : Service() {
         fun getService(): AlarmService = this@AlarmService
     }
 
-    companion object {
-        const val NOTIFICATION_CHANNEL_ID = "1000"
-        const val NOTIFICATION_ID = 100
-    }
-
 }
