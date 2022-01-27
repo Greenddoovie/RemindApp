@@ -9,7 +9,7 @@
         android:id="@+id/navigation_home"
         android:name="com.example.remindapp.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_navigation_home_to_navigation_edit"
             app:destination="@id/navigation_edit" />
@@ -23,12 +23,12 @@
         android:id="@+id/navigation_edit"
         android:name="com.example.remindapp.ui.edit.EditFragment"
         android:label="@string/title_edit"
-        tools:layout="@layout/fragment_edit" >
+        tools:layout="@layout/fragment_edit">
 
         <argument
             android:name="selection"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 
     <fragment
@@ -39,7 +39,7 @@
 
         <argument
             android:name="selection"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 </navigation>

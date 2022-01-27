@@ -1,96 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.edit.EditFragment">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/container_edit_toolbar"
-        app:layout_constraintTop_toTopOf="parent"
+    <data>
+
+        <variable
+            name="editFragment"
+            type="com.example.remindapp.ui.edit.EditFragment" />
+
+        <variable
+            name="editVM"
+            type="com.example.remindapp.ui.edit.EditViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        tools:context=".ui.edit.EditFragment">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            app:title="@string/edit_fragment_toolbar_title"
-            app:titleCentered="true"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/container_edit_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.material.appbar.MaterialToolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="@string/edit_fragment_toolbar_title"
+                app:titleCentered="true" />
 
-    <TextView
-        android:id="@+id/tv_edit_fragment_remind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/edit_fragment_remind"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/container_edit_toolbar"
-        app:layout_constraintStart_toStartOf="parent" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <EditText
-        android:id="@+id/et_edit_fragment_remind_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:hint="@string/edit_fragment_remind_title_hint"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/tv_edit_fragment_remind" />
+        <TextView
+            android:id="@+id/tv_edit_fragment_remind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/edit_fragment_remind"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container_edit_toolbar" />
 
-    <TextView
-        android:id="@+id/tv_edit_fragment_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:textStyle="bold"
-        android:text="@string/edit_fragment_time"
-        app:layout_constraintTop_toBottomOf="@id/et_edit_fragment_remind_title"
-        app:layout_constraintStart_toStartOf="@id/et_edit_fragment_remind_title" />
+        <EditText
+            android:id="@+id/et_edit_fragment_remind_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="@string/edit_fragment_remind_title_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@{editVM.remind.title}"
+            app:layout_constraintTop_toBottomOf="@id/tv_edit_fragment_remind" />
 
-    <TimePicker
-        android:id="@+id/tp_edit_fragment_remind_time_selection"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:timePickerMode="spinner"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_edit_fragment_time"
-        app:layout_constraintStart_toStartOf="@id/et_edit_fragment_remind_title"
-        app:layout_constraintEnd_toEndOf="@id/et_edit_fragment_remind_title" />
+        <TextView
+            android:id="@+id/tv_edit_fragment_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/edit_fragment_time"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/et_edit_fragment_remind_title"
+            app:layout_constraintTop_toBottomOf="@id/et_edit_fragment_remind_title" />
 
-    <TextView
-        android:id="@+id/tv_edit_fragment_notification_song"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:textStyle="bold"
-        android:text="@string/edit_fragment_notification_song"
-        app:layout_constraintTop_toBottomOf="@id/tp_edit_fragment_remind_time_selection"
-        app:layout_constraintStart_toStartOf="@id/tp_edit_fragment_remind_time_selection" />
+        <TimePicker
+            android:id="@+id/tp_edit_fragment_remind_time_selection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hour="@{editVM.remind.hour}"
+            android:minute="@{editVM.remind.minute}"
+            android:timePickerMode="spinner"
+            app:layout_constraintEnd_toEndOf="@id/et_edit_fragment_remind_title"
+            app:layout_constraintStart_toStartOf="@id/et_edit_fragment_remind_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_edit_fragment_time" />
 
-
-    <include
-        android:id="@+id/container_edit_fragment_notification_song"
-        android:layout_width="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_height="wrap_content"
-        layout="@layout/notification_song"
-        app:layout_constraintTop_toBottomOf="@id/tv_edit_fragment_notification_song" />
-
-    <Button
-        android:id="@+id/bt_edit_fragment_save_remind"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/edit_fragment_save_remind"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/et_edit_fragment_remind_title"
-        app:layout_constraintEnd_toEndOf="@id/et_edit_fragment_remind_title" />
+        <TextView
+            android:id="@+id/tv_edit_fragment_notification_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/edit_fragment_notification_song"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tp_edit_fragment_remind_time_selection"
+            app:layout_constraintTop_toBottomOf="@id/tp_edit_fragment_remind_time_selection" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <include
+            android:id="@+id/container_edit_fragment_notification_song"
+            layout="@layout/notification_song"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:onClick="@{() -> editFragment.selectRingtone()}"
+            app:layout_constraintTop_toBottomOf="@id/tv_edit_fragment_notification_song"
+            bind:title="@{editFragment.getTitleFromUri(editVM.uri)}" />
+
+        <Button
+            android:id="@+id/bt_edit_fragment_save_remind"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> editFragment.saveRemindButton()}"
+            android:text="@string/edit_fragment_save_remind"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/et_edit_fragment_remind_title"
+            app:layout_constraintStart_toStartOf="@id/et_edit_fragment_remind_title" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

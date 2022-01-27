@@ -14,9 +14,11 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.remindapp.R
 import com.example.remindapp.databinding.FragmentEditBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
@@ -35,13 +37,10 @@ class EditFragment : Fragment() {
         ActivityResultCallback { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val intent = result.data
-                intent?: return@ActivityResultCallback
+                intent ?: return@ActivityResultCallback
 
-                uri = intent.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                println("uri: $uri")
-                val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
-                binding.containerEditFragmentNotificationSong.tvEditFragmentNotificationSongTitle.text =
-                    ringtone.getTitle(requireContext())
+                uri = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                editViewModel.setUri(uri.toString())
             }
         }
     )
@@ -51,20 +50,24 @@ class EditFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
+        val repo =
+            RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         editViewModel =
-            ViewModelProvider(this, EditViewModel.EditViewModelFactory(repo)).get(EditViewModel::class.java)
-
-        _binding = FragmentEditBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        return root
+            ViewModelProvider(
+                this,
+                EditViewModel.EditViewModelFactory(repo)
+            ).get(EditViewModel::class.java)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.editVM = editViewModel
+        binding.editFragment = this
+        binding.lifecycleOwner = viewLifecycleOwner
+
         setTouchListener()
-        setClickListener()
         setObservers()
 
         val idx = arguments?.get("selection") as Int// -1 이면 추가
@@ -87,47 +90,34 @@ class EditFragment : Fragment() {
         }
     }
 
-    private fun setClickListener() {
-        binding.containerEditFragmentNotificationSong.root.setOnClickListener{
-            val ringtoneIntent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+    fun saveRemindButton() {
+        with(binding) {
+            if (etEditFragmentRemindTitle.text.toString() == "") {
+                Toast.makeText(requireContext(), "Fill title", Toast.LENGTH_SHORT).show()
+                return
             }
-            ringtoneCallback.launch(ringtoneIntent)
-        }
-
-        binding.btEditFragmentSaveRemind.setOnClickListener {
-            with(binding) {
-                if (etEditFragmentRemindTitle.text.toString() == "") {
-                    Toast.makeText(requireContext(), "Fill title", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
+            val hour = tpEditFragmentRemindTimeSelection.hour
+            val minute = tpEditFragmentRemindTimeSelection.minute
+            val title = etEditFragmentRemindTitle.text.toString()
+            uri?.let { editViewModel.saveAlarm(title, uri.toString(), hour, minute) }
+                ?: run {
+                    Toast.makeText(requireContext(), "Select ringtone", Toast.LENGTH_SHORT).show()
                 }
-                val hour = tpEditFragmentRemindTimeSelection.hour
-                val minute = tpEditFragmentRemindTimeSelection.minute
-                val title = etEditFragmentRemindTitle.text.toString()
-                uri?.let { editViewModel.saveAlarm(title, uri.toString(), hour, minute) }
-                    ?: run {
-                        Toast.makeText(requireContext(), "Select ringtone", Toast.LENGTH_SHORT).show()
-                    }
-            }
         }
+    }
+
+    fun selectRingtone() {
+        val ringtoneIntent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+        }
+        ringtoneCallback.launch(ringtoneIntent)
     }
 
     private fun setObservers() {
         editViewModel.alarmSaved.observe(viewLifecycleOwner, { saved ->
-            if (saved) { findNavController().popBackStack() }
-        })
-
-        editViewModel.remind.observe(viewLifecycleOwner, { remind ->
-            val tmpUri = run {
-                remind.uri.toUri().also { uri = it }
-            }
-            with(binding) {
-                etEditFragmentRemindTitle.setText(remind.title)
-                tpEditFragmentRemindTimeSelection.hour = remind.hour
-                tpEditFragmentRemindTimeSelection.minute = remind.minute
-                containerEditFragmentNotificationSong.tvEditFragmentNotificationSongTitle.text =
-                    getTitleFromUri(tmpUri)
+            if (saved) {
+                findNavController().popBackStack()
             }
         })
     }
@@ -143,8 +133,9 @@ class EditFragment : Fragment() {
         }
     }
 
-    private fun getTitleFromUri(uri: Uri): String {
-        val ringtone = RingtoneManager.getRingtone(requireContext(), uri)
+    fun getTitleFromUri(uri: String?): String {
+        if (uri == null) return ""
+        val ringtone = RingtoneManager.getRingtone(requireContext(), uri.toUri())
         return ringtone.getTitle(requireContext())
     }
 }

@@ -1,4 +1,4 @@
-package com.example.remindapp.ui.edit
+package com.example.remindapp.util
 
 import android.util.Log
 import androidx.annotation.MainThread
@@ -18,7 +18,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
             Log.w(TAG, "Multiple observers registered but only one will be notified fo changes.")
         }
 
-        super.observe(owner, Observer { t ->
+        super.observe(owner, { t ->
             if (pending.compareAndSet(true, false)) {
                 observer.onChanged(t)
             }

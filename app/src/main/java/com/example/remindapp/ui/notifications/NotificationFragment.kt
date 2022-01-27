@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -50,26 +51,25 @@ class NotificationFragment : Fragment() {
             ViewModelProvider(this, NotificationViewModel.NotificationViewModelFactory(repo)).get(
                 NotificationViewModel::class.java
             )
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-
+        _binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_notifications, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setObserver()
-        setClickListener()
-
-        val id = arguments?.get("remindIdx") as Int
-        if (id != -1) {
-            fetchRemind(id)
-        }
+        binding.notiFragment = this
+        binding.notiViewModel = notificationViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     override fun onStart() {
         super.onStart()
         bindAlarmService()
+        val idx = arguments?.get("remindIdx") as Int
+        if (idx != -1) {
+            notificationViewModel.fetchRemind(idx)
+        }
     }
 
     override fun onStop() {
@@ -82,26 +82,12 @@ class NotificationFragment : Fragment() {
         _binding = null
     }
 
-    private fun fetchRemind(id: Int) {
-        notificationViewModel.fetchRemind(id)
-    }
-
-    private fun setObserver() {
-        notificationViewModel.remind.observe(viewLifecycleOwner, { remind ->
-            binding.tvNotiFragmentTitle.text = remind.title
-            binding.tvNotiFragmentTime.text =
-                getString(R.string.display_time, remind.hour, remind.minute)
-        })
-    }
-
-    private fun setClickListener() {
-        binding.btNotiFragmentDismiss.setOnClickListener {
-            if (bound) {
-                alarmService.stopService()
-                notificationViewModel.update()
-            }
-            findNavController().popBackStack()
+    fun dismissOnClick() {
+        if (bound) {
+            alarmService.stopService()
+            notificationViewModel.update()
         }
+        findNavController().popBackStack()
     }
 
     private fun bindAlarmService() {
@@ -114,4 +100,5 @@ class NotificationFragment : Fragment() {
         requireContext().unbindService(connection)
         bound = false
     }
+
 }

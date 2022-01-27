@@ -3,25 +3,22 @@ package com.example.remindapp.ui.notifications
 import androidx.lifecycle.*
 import com.example.remindapp.model.repository.IRemindRepo
 import com.example.remindapp.model.room.Remind
+import com.example.remindapp.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NotificationViewModel(private val repo: IRemindRepo) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
-    }
-    val text: LiveData<String> = _text
-
-    private var _remind = MutableLiveData<Remind>()
-    val remind: LiveData<Remind> get() = _remind
+    private var _remind = SingleLiveEvent<Remind>()
+    val remind get() = _remind
 
     fun fetchRemind(id: Int) {
         viewModelScope.launch {
             val tmpRemind = withContext(Dispatchers.IO) {
                 repo.getRemind(id)
             }
+            println("tmpRemind: $tmpRemind")
             _remind.value = tmpRemind
         }
     }

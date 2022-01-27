@@ -1,45 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/container_edit_toolbar"
-        app:layout_constraintTop_toTopOf="parent"
+    <data>
+        <variable
+            name="fragment"
+            type="com.example.remindapp.ui.home.HomeFragment" />
+        <variable
+            name="viewmodel"
+            type="com.example.remindapp.ui.home.HomeViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        tools:context=".ui.home.HomeFragment">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            app:title="@string/main_fragment_toolbar_title"
-            app:titleCentered="true"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/container_edit_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="wrap_content">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.material.appbar.MaterialToolbar
+                app:title="@string/main_fragment_toolbar_title"
+                app:titleCentered="true"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/bt_add_remind"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:drawableStart="@drawable/plus_24"
-        android:text="@string/main_fragment_add_remind"
-        app:layout_constraintTop_toBottomOf="@id/container_edit_toolbar" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/container_remind_item"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/bt_add_remind"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_remind_main_fragment"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_add_remind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:drawableStart="@drawable/plus_24"
+            android:text="@string/main_fragment_add_remind"
+            android:onClick="@{() -> fragment.clickRemindButton()}"
+            app:layout_constraintTop_toBottomOf="@id/container_edit_toolbar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            submitList="@{viewmodel.reminds}"
+            android:id="@+id/container_remind_item"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/bt_add_remind"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/item_remind_main_fragment" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

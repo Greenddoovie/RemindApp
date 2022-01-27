@@ -18,19 +18,27 @@ class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
             val remindList = withContext(Dispatchers.IO) {
                 remindRepository.getAll()
             }
-            _reminds.value = remindList.sortedWith(compareBy( {it.hour}, {it.minute}))
+            _reminds.value = remindList.sortedWith(compareBy({ it.hour }, { it.minute }))
         }
     }
 
     fun update(item: Remind, checked: Boolean) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                remindRepository.update(item.title, item.hour, item.minute, item.uri, checked, item.id)
+                remindRepository.update(
+                    item.title,
+                    item.hour,
+                    item.minute,
+                    item.uri,
+                    checked,
+                    item.id
+                )
             }
         }
     }
 
-    class HomeViewModelFactory(private val remindRepository: RemindRepository) : ViewModelProvider.Factory {
+    class HomeViewModelFactory(private val remindRepository: RemindRepository) :
+        ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return HomeViewModel(remindRepository) as T
         }

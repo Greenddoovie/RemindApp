@@ -35,6 +35,7 @@ class AlarmService : Service() {
             notifyNotification(applicationContext)
         }
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) return START_NOT_STICKY
 
@@ -42,7 +43,8 @@ class AlarmService : Service() {
         val onOff = intent.extras?.get("alarm") ?: "off"
 
         if (onOff == "on") {
-            repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(applicationContext)))
+            repo =
+                RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(applicationContext)))
             CoroutineScope(Dispatchers.IO).launch {
                 val remind = repo.getRemind(idx as Int)
                 mediaPlayer = MediaPlayer.create(applicationContext, remind.uri.toUri())
@@ -52,7 +54,8 @@ class AlarmService : Service() {
                 withContext(Dispatchers.Main) {
                     val activityIntent = Intent(applicationContext, MainActivity::class.java)
                     activityIntent.putExtra("remindIdx", remind.id)
-                    activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    activityIntent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     applicationContext.startActivity(activityIntent)
                 }
 
