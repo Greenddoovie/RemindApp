@@ -26,6 +26,17 @@ class NotificationViewModel(private val repo: IRemindRepo) : ViewModel() {
         }
     }
 
+    fun update() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val tmp = _remind.value ?: return@withContext
+                with(tmp) {
+                    repo.update(title, hour, minute, uri, false, id)
+                }
+            }
+        }
+    }
+
     class NotificationViewModelFactory(private val repo: IRemindRepo) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return NotificationViewModel(repo) as T

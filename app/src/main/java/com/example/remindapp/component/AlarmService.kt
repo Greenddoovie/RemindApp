@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -23,6 +24,7 @@ import kotlinx.coroutines.withContext
 
 class AlarmService : Service() {
 
+    private val binder = AlarmBinder()
     private lateinit var repo: RemindRepository
     private lateinit var mediaPlayer: MediaPlayer
 
@@ -67,10 +69,13 @@ class AlarmService : Service() {
         super.onDestroy()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    override fun onBind(intent: Intent?): IBinder {
+        return binder
     }
 
+    fun stopService() {
+        stopSelf()
+    }
 
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -91,6 +96,10 @@ class AlarmService : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSmallIcon(R.drawable.alarm_24)
         startForeground(NOTIFICATION_ID, build.build())
+    }
+
+    inner class AlarmBinder : Binder() {
+        fun getService(): AlarmService = this@AlarmService
     }
 
     companion object {

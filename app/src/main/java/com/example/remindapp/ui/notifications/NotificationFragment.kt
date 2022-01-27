@@ -1,6 +1,11 @@
 package com.example.remindapp.ui.notifications
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +13,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
+import com.example.remindapp.component.AlarmService
 import com.example.remindapp.databinding.FragmentNotificationsBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
@@ -17,9 +24,23 @@ import com.example.remindapp.model.room.RemindDatabase
 class NotificationFragment : Fragment() {
 
     private lateinit var notificationViewModel: NotificationViewModel
+    private var bound: Boolean = false
     private var _binding: FragmentNotificationsBinding? = null
-
     private val binding get() = _binding!!
+
+    private lateinit var alarmService: AlarmService
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as AlarmService.AlarmBinder
+            alarmService = binder.getService()
+            bound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            bound = false
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,9 +59,20 @@ class NotificationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setObserver()
+        setClickListener()
 
         val id = arguments?.get("remindIdx") as Int
         if (id != -1) { fetchRemind(id) }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        bindAlarmService()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindAlarmService()
     }
 
     override fun onDestroyView() {
@@ -61,11 +93,20 @@ class NotificationFragment : Fragment() {
 
     private fun setClickListener() {
         binding.btNotiFragmentDismiss.setOnClickListener {
-
+            alarmService.stopService()
+            notificationViewModel.update()
+            findNavController().popBackStack()
         }
     }
 
-    private fun bindService() {
+    private fun bindAlarmService() {
+        Intent(requireContext(), AlarmService::class.java).also {
+            requireContext().bindService(it, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
 
+    private fun unbindAlarmService() {
+        requireContext().unbindService(connection)
+        bound = false
     }
 }
