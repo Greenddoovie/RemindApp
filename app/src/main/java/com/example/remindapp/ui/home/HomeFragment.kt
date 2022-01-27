@@ -49,13 +49,15 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.fragment = this
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewmodel = homeViewModel
         setAdapters()
         setObservers()
-        fetchRemindList()
+
     }
 
     override fun onStart() {
         super.onStart()
+        fetchRemindList()
         checkAlarmState()
     }
 
@@ -94,8 +96,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setObservers() {
-        homeViewModel.reminds.observe(viewLifecycleOwner, { reminds ->
-            remindAdapter.submitList(reminds)
+        homeViewModel.reminds.observe(viewLifecycleOwner, { _ ->
             checkAlarmState()
         })
     }

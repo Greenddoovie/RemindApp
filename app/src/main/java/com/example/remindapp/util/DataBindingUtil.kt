@@ -8,6 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 @BindingAdapter("submitList")
 fun <T, VH : RecyclerView.ViewHolder> RecyclerView.submitList(list: List<T>?) {
     list?.let {
-        (adapter as ListAdapter<T, VH>).submitList(list)
+        (adapter as ListAdapter<T, VH>).submitList(it)
     }
 }
