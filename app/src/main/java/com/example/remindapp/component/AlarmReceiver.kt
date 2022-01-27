@@ -16,10 +16,8 @@ class AlarmReceiver : BroadcastReceiver() {
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 it.startForegroundService(serviceIntent)
-                println("service started")
             } else {
                 it.startService(serviceIntent)
-                println("service started")
             }
 
         }
