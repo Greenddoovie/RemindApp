@@ -21,7 +21,9 @@ import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
 import com.example.remindapp.util.convertDateToMillis
+import com.example.remindapp.util.findTarget
 import com.example.remindapp.util.getCurrentTime
+import com.example.remindapp.util.setAlarm
 
 class HomeFragment : Fragment() {
 
@@ -100,32 +102,9 @@ class HomeFragment : Fragment() {
 
     private fun checkAlarmState() {
         cancelAlarm()
-        setAlarm()
-    }
-
-    private fun setAlarm() {
-        val remindList = homeViewModel.reminds.value ?: return
-        if (remindList.isEmpty()) return
-
-        val (target, dayPlus) = findTarget(remindList)
-        if (target == null) return
-
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val pending = Intent(requireContext(), AlarmReceiver::class.java).apply {
-            putExtra("remindIdx", target.id)
-        }.run {
-            PendingIntent.getBroadcast(
-                requireContext(),
-                ALARM_REQUEST_CODE,
-                this,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+        homeViewModel.reminds.value?.let {
+            setAlarm(it, requireContext())
         }
-        val curMillis = convertDateToMillis(target.hour, target.minute, dayPlus)
-        if (curMillis == -1L) return
-
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, curMillis, pending)
     }
 
     private fun cancelAlarm() {
@@ -136,20 +115,6 @@ class HomeFragment : Fragment() {
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
         pending?.cancel()
-    }
-
-    private fun filterActiveGreaterThanCurTime(reminds: List<Remind>): List<Remind> {
-        val (currentHour, currentMin) = getCurrentTime()
-        return reminds.filter { it.active }.filter { it.hour >= currentHour }.filter { it.minute > currentMin }
-    }
-
-    private fun findTarget(reminds: List<Remind>): Pair<Remind?, Boolean> {
-        val filtered = filterActiveGreaterThanCurTime(reminds)
-        return if (filtered.isNullOrEmpty()) {
-            reminds.firstOrNull { it.active } to true
-        } else {
-            filtered.firstOrNull() to false
-        }
     }
 
     companion object {
