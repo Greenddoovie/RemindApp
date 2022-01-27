@@ -8,8 +8,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.remindapp.R
 import com.example.remindapp.databinding.FragmentNotificationsBinding
+import com.example.remindapp.model.repository.RemindLocalDatasource
+import com.example.remindapp.model.repository.RemindRepository
+import com.example.remindapp.model.room.RemindDatabase
 
 class NotificationsFragment : Fragment() {
 
@@ -24,9 +26,10 @@ class NotificationsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
         notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+            ViewModelProvider(this, NotificationsViewModel.NotiViewModelFactory(repo)).get(NotificationsViewModel::class.java)
 
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -38,6 +41,10 @@ class NotificationsFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val id = arguments?.get("remindIdx")
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
