@@ -99,10 +99,12 @@ class EditFragment : Fragment() {
             val hour = tpEditFragmentRemindTimeSelection.hour
             val minute = tpEditFragmentRemindTimeSelection.minute
             val title = etEditFragmentRemindTitle.text.toString()
-            uri?.let { editViewModel.saveAlarm(title, uri.toString(), hour, minute) }
-                ?: run {
-                    Toast.makeText(requireContext(), "Select ringtone", Toast.LENGTH_SHORT).show()
-                }
+            val song = containerEditFragmentNotificationSong.tvEditFragmentNotificationSongTitle.text
+            if (song == "") {
+                Toast.makeText(requireContext(), "Select ringtone", Toast.LENGTH_SHORT).show()
+                return
+            }
+            editViewModel.saveAlarm(title, hour, minute)
         }
     }
 

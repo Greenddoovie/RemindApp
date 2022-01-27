@@ -20,7 +20,8 @@ class EditViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
     private var _uri = MutableLiveData<String>()
     val uri: LiveData<String> get() = _uri
 
-    fun saveAlarm(title: String, uri: String, hour: Int, minute: Int) {
+    fun saveAlarm(title: String, hour: Int, minute: Int) {
+        val uri = uri.value!!
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val tmpRemind = remind.value
@@ -50,8 +51,6 @@ class EditViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
     fun setUri(uri: String) {
         _uri.value = uri
     }
-
-    //ToDo: 저장에 실패한 경우 처리 어떻게 할지 고민
 
     class EditViewModelFactory(private val remindRepository: RemindRepository) :
         ViewModelProvider.Factory {
