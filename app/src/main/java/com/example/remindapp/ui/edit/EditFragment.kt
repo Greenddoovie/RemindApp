@@ -23,6 +23,7 @@ import com.example.remindapp.databinding.FragmentEditBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
+import com.example.remindapp.util.SELECTION
 
 class EditFragment : Fragment() {
 
@@ -70,7 +71,7 @@ class EditFragment : Fragment() {
         setTouchListener()
         setObservers()
 
-        val idx = arguments?.get("selection") as Int// -1 이면 추가
+        val idx = arguments?.get(SELECTION) as Int// -1 이면 추가
         fetchRemind(idx)
     }
 
@@ -140,4 +141,5 @@ class EditFragment : Fragment() {
         val ringtone = RingtoneManager.getRingtone(requireContext(), uri.toUri())
         return ringtone.getTitle(requireContext())
     }
+
 }

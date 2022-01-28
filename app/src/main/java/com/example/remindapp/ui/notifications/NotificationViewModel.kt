@@ -18,7 +18,6 @@ class NotificationViewModel(private val repo: IRemindRepo) : ViewModel() {
             val tmpRemind = withContext(Dispatchers.IO) {
                 repo.getRemind(id)
             }
-            println("tmpRemind: $tmpRemind")
             _remind.value = tmpRemind
         }
     }

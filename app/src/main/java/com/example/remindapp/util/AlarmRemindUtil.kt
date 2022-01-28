@@ -31,7 +31,7 @@ fun setAlarm(remindList: List<Remind>, context: Context) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     val pending = Intent(context, AlarmReceiver::class.java).apply {
-        putExtra("remindIdx", target.id)
+        putExtra(REMIND_IDX, target.id)
     }.run {
         PendingIntent.getBroadcast(
             context,

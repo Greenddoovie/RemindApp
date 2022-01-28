@@ -8,6 +8,8 @@ import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
 import com.example.remindapp.ui.home.HomeFragment
+import com.example.remindapp.util.ALARM_STATE
+import com.example.remindapp.util.REMIND_IDX
 import com.example.remindapp.util.setAlarm
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -23,11 +25,11 @@ class AlarmReceiver : BroadcastReceiver() {
                 cancelAlarm(it.applicationContext)
                 setAlarm(reminds, it.applicationContext)
             } else {
-                val remindIdx = intent?.extras?.get("remindIdx") ?: -1
+                val remindIdx = intent.extras?.get(REMIND_IDX) ?: -1
 
                 val serviceIntent = Intent(it, AlarmService::class.java).apply {
-                    putExtra("alarm", "on")
-                    putExtra("remindIdx", remindIdx as Int)
+                    putExtra(ALARM_STATE, "on")
+                    putExtra(REMIND_IDX, remindIdx as Int)
                 }
 
                 it.startService(serviceIntent)

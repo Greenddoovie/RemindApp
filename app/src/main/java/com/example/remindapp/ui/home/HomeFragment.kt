@@ -20,10 +20,7 @@ import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.util.convertDateToMillis
-import com.example.remindapp.util.findTarget
-import com.example.remindapp.util.getCurrentTime
-import com.example.remindapp.util.setAlarm
+import com.example.remindapp.util.*
 
 class HomeFragment : Fragment() {
 
@@ -75,7 +72,7 @@ class HomeFragment : Fragment() {
             object: RemindAdapter.RemindItemClickListener {
                 override fun onClick(itemIdx: Int) {
                     Bundle().let {
-                        it.putInt("selection", itemIdx)
+                        it.putInt(SELECTION, itemIdx)
                         findNavController().navigate(R.id.action_navigation_home_to_navigation_edit, it)
                     }
                 }

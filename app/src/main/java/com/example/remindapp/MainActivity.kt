@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import com.example.remindapp.databinding.ActivityMainBinding
+import com.example.remindapp.util.REMIND_IDX
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,12 +43,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         checkPermission()
-        val idx = intent?.extras?.get("remindIdx")
+        val idx = intent?.extras?.get(REMIND_IDX)
 
         if (idx != null) {
             val id = idx as Int
             val bundle = Bundle()
-            bundle.putInt("remindIdx", id)
+            bundle.putInt(REMIND_IDX, id)
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
             val navController = navHostFragment.navController
