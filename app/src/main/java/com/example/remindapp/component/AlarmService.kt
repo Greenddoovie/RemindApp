@@ -10,8 +10,7 @@ import com.example.remindapp.MainActivity
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.util.ALARM_STATE
-import com.example.remindapp.util.REMIND_IDX
+import com.example.remindapp.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,9 +26,9 @@ class AlarmService : Service() {
         if (intent == null) return START_NOT_STICKY
 
         val idx = intent.extras?.get(REMIND_IDX) ?: -1
-        val onOff = intent.extras?.get(ALARM_STATE) ?: "off"
+        val onOff = intent.extras?.get(ALARM_STATE) ?: OFF
 
-        if (onOff == "on") {
+        if (onOff == ON) {
             repo =
                 RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(applicationContext)))
             CoroutineScope(Dispatchers.IO).launch {
