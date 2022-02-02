@@ -62,6 +62,7 @@ class RemindAdapter(
 
         fun bind(item: Remind) {
             binding.remind = item
+            binding.executePendingBindings()
             this.item = item
         }
     }
