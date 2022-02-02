@@ -16,32 +16,24 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent == null) return
         val action = intent.action
 
-        context?.let {
+        context?.let { tmpContext ->
+            val remindIdx = intent.extras?.get(REMIND_IDX) ?: OFF
+            if (remindIdx == OFF) return
             if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-                val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(it.applicationContext)))
+                val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(tmpContext.applicationContext)))
                 val reminds = repo.getAll()
-                cancelAlarm(it.applicationContext)
-                setAlarm(reminds, it.applicationContext)
+                reminds.forEach { remind ->
+                    if (remind.active) {
+                        RemindManager.setPendingRemind(tmpContext, remind)
+                    }
+                }
             } else {
-                val remindIdx = intent.extras?.get(REMIND_IDX) ?: OFF
-
-                val serviceIntent = Intent(it, AlarmService::class.java).apply {
+                val serviceIntent = Intent(tmpContext, AlarmService::class.java).apply {
                     putExtra(ALARM_STATE, ON)
                     putExtra(REMIND_IDX, remindIdx as Int)
                 }
-
-                it.startService(serviceIntent)
+                tmpContext.startService(serviceIntent)
             }
         }
-    }
-
-    private fun cancelAlarm(context: Context) {
-        val pending = PendingIntent.getBroadcast(
-            context,
-            HomeFragment.ALARM_REQUEST_CODE,
-            Intent(context, AlarmReceiver::class.java),
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        pending?.cancel()
     }
 }

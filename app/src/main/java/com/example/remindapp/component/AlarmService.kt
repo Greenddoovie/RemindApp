@@ -39,11 +39,11 @@ class AlarmService : Service() {
                 mediaPlayer.isLooping = true
 
                 withContext(Dispatchers.Main) {
-                    val activityIntent = Intent(applicationContext, MainActivity::class.java)
-                    activityIntent.putExtra(REMIND_IDX, remind.id)
-                    activityIntent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    applicationContext.startActivity(activityIntent)
+                    Intent(applicationContext, MainActivity::class.java).run {
+                        putExtra(REMIND_IDX, remind.id)
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        applicationContext.startActivity(this)
+                    }
                 }
             }
             return START_NOT_STICKY

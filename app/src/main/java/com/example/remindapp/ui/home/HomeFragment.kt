@@ -1,8 +1,6 @@
 package com.example.remindapp.ui.home
 
-import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -48,14 +46,11 @@ class HomeFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewmodel = homeViewModel
         setAdapters()
-        setObservers()
-
     }
 
     override fun onStart() {
         super.onStart()
         fetchRemindList()
-        checkAlarmState()
     }
 
     override fun onDestroyView() {
@@ -80,7 +75,7 @@ class HomeFragment : Fragment() {
             object: RemindAdapter.CheckBoxClickListener {
                 override fun onClick(view: View, item: Remind) {
                     val tmpView = view as CheckBox
-                    checkAlarmState()
+                    if (tmpView.isChecked) setPendingRemind(item) else cancelRemind(item)
                     homeViewModel.update(item, tmpView.isChecked)
                 }
             }
@@ -92,27 +87,16 @@ class HomeFragment : Fragment() {
         homeViewModel.fetchReminds()
     }
 
-    private fun setObservers() {
-        homeViewModel.reminds.observe(viewLifecycleOwner, { _ ->
-            checkAlarmState()
-        })
-    }
-
-    private fun checkAlarmState() {
-        cancelAlarm()
-        homeViewModel.reminds.value?.let {
-            setAlarm(it, requireContext())
+    private fun cancelRemind(remind: Remind) {
+        context?.let { it ->
+            RemindManager.cancelRemind(it, remind)
         }
     }
 
-    private fun cancelAlarm() {
-        val pending = PendingIntent.getBroadcast(
-            requireContext(),
-            ALARM_REQUEST_CODE,
-            Intent(requireContext(), AlarmReceiver::class.java),
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        pending?.cancel()
+    private fun setPendingRemind(remind: Remind) {
+        context?.let { it ->
+            RemindManager.setPendingRemind(it, remind)
+        }
     }
 
     companion object {
