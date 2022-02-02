@@ -31,9 +31,15 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
+        val repo =
+            RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(requireContext().applicationContext)))
+
         homeViewModel =
-            ViewModelProvider(this, HomeViewModel.HomeViewModelFactory(repo)).get(HomeViewModel::class.java)
+            ViewModelProvider(
+                this,
+                HomeViewModel.HomeViewModelFactory(repo)
+            ).get(HomeViewModel::class.java)
+
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
         return binding.root
@@ -59,7 +65,7 @@ class HomeFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener(
             RESULT_KEY_CHECK_CHANGE,
             viewLifecycleOwner
-        ) {_, result ->
+        ) { _, result ->
             val idx = result.getInt(BUNDLE_KEY_IDX)
             lifecycleScope.launch {
                 homeViewModel.getRemind(idx)?.let {
@@ -75,15 +81,18 @@ class HomeFragment : Fragment() {
 
     private fun setAdapters() {
         remindAdapter = RemindAdapter(
-            object: RemindAdapter.RemindItemClickListener {
+            object : RemindAdapter.RemindItemClickListener {
                 override fun onClick(itemIdx: Int) {
                     Bundle().let {
                         it.putInt(SELECTION, itemIdx)
-                        findNavController().navigate(R.id.action_navigation_home_to_navigation_edit, it)
+                        findNavController().navigate(
+                            R.id.action_navigation_home_to_navigation_edit,
+                            it
+                        )
                     }
                 }
             },
-            object: RemindAdapter.CheckBoxClickListener {
+            object : RemindAdapter.CheckBoxClickListener {
                 override fun onClick(view: View, item: Remind) {
                     val tmpView = view as CheckBox
                     if (tmpView.isChecked) setPendingRemind(item) else cancelRemind(item)
