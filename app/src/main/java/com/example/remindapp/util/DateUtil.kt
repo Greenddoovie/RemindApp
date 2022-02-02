@@ -26,7 +26,7 @@ fun convertDateToMillis(hour: Int, minute: Int, flag: Boolean): Long {
         e.printStackTrace()
         -1L
     }
-    return if(flag) result + 86400000L else result
+    return if(flag) result + DAY_MILLIS else result
 }
 
 private fun getTime(hour: Int, minute: Int): String {
