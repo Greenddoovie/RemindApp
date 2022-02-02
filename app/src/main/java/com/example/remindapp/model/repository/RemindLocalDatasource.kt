@@ -31,4 +31,8 @@ class RemindLocalDatasource(private val remindDatabase: RemindDatabase) : IRemin
         return remindDatabase.remindDao().getRemind(idx)
     }
 
+    override fun getRemind(title: String, hour: Int, minute: Int, uri: String): Remind {
+        return remindDatabase.remindDao().getRemind(title, hour, minute, uri)
+    }
+
 }

@@ -30,4 +30,8 @@ class RemindRepository(private val remindLocalDatasource: IRemindRepo) : IRemind
         return remindLocalDatasource.getRemind(idx)
     }
 
+    override fun getRemind(title: String, hour: Int, minute: Int, uri: String): Remind {
+        return remindLocalDatasource.getRemind(title, hour, minute, uri)
+    }
+
 }
