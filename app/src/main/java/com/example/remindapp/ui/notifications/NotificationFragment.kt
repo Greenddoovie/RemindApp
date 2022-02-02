@@ -20,7 +20,7 @@ import com.example.remindapp.databinding.FragmentNotificationsBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.util.REMIND_IDX
+import com.example.remindapp.util.SELECTED_REMIND_IDX
 
 class NotificationFragment : Fragment() {
 
@@ -69,7 +69,7 @@ class NotificationFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         bindAlarmService()
-        val idx = arguments?.get(REMIND_IDX) as Int
+        val idx = arguments?.get(SELECTED_REMIND_IDX) as Int
         if (idx != -1) {
             notificationViewModel.fetchRemind(idx)
         }

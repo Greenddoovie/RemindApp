@@ -25,7 +25,7 @@ class AlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) return START_NOT_STICKY
 
-        val idx = intent.extras?.get(REMIND_IDX) ?: -1
+        val idx = intent.extras?.get(SELECTED_REMIND_IDX) ?: -1
         val onOff = intent.extras?.get(ALARM_STATE) ?: OFF
 
         if (onOff == ON) {
@@ -40,7 +40,7 @@ class AlarmService : Service() {
 
                 withContext(Dispatchers.Main) {
                     Intent(applicationContext, MainActivity::class.java).run {
-                        putExtra(REMIND_IDX, remind.id)
+                        putExtra(SELECTED_REMIND_IDX, remind.id)
                         this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         applicationContext.startActivity(this)
                     }
@@ -67,6 +67,12 @@ class AlarmService : Service() {
 
     inner class AlarmBinder : Binder() {
         fun getService(): AlarmService = this@AlarmService
+    }
+
+    companion object {
+        const val ALARM_STATE = "alarm"
+        const val ON = 1
+        const val OFF = 0
     }
 
 }

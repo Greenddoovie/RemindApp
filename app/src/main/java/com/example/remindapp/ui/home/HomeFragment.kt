@@ -1,7 +1,5 @@
 package com.example.remindapp.ui.home
 
-import android.app.PendingIntent
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,17 +7,15 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
-import com.example.remindapp.component.AlarmReceiver
 import com.example.remindapp.databinding.FragmentHomeBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.util.*
+import com.example.remindapp.util.RemindManager
 
 class HomeFragment : Fragment() {
 
@@ -97,7 +93,7 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
-        const val ALARM_REQUEST_CODE = 10001
+        const val SELECTION = "selection"
     }
 
 }

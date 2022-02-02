@@ -3,10 +3,17 @@ package com.example.remindapp.component
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.remindapp.component.AlarmService.Companion.ALARM_STATE
+import com.example.remindapp.component.AlarmService.Companion.OFF
+import com.example.remindapp.component.AlarmService.Companion.ON
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.util.*
+import com.example.remindapp.util.SELECTED_REMIND_IDX
+import com.example.remindapp.util.RemindManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -15,27 +22,25 @@ class AlarmReceiver : BroadcastReceiver() {
         val action = intent.action
 
         context?.let { tmpContext ->
-            println("Result Broadcast Receiver is called")
-            val remindIdx = intent.extras?.get(REMIND_IDX) ?: OFF
-            println("Result Broadcast Receiver : $remindIdx")
-            println("Result Action: ${intent.action}")
-            println("Result Action Boolean: ${Intent.ACTION_BOOT_COMPLETED == action}")
+            val remindIdx = intent.extras?.get(SELECTED_REMIND_IDX) ?: OFF
             if (Intent.ACTION_BOOT_COMPLETED == action || Intent.ACTION_LOCKED_BOOT_COMPLETED == action) {
-                val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(tmpContext.applicationContext)))
-                repo.getAll().forEach { remind ->
-                    if (remind.active) {
-                        RemindManager.setPendingRemind(tmpContext, remind)
+                val result = goAsync()
+                GlobalScope.launch(Dispatchers.IO) {
+                    val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(tmpContext.applicationContext)))
+                    repo.getAll().forEach { remind ->
+                        if (remind.active) {
+                            RemindManager.setPendingRemind(tmpContext, remind)
+                        }
                     }
+                    result.finish()
                 }
-                println("Result boot complete is called")
             } else {
                 if (remindIdx == OFF) return
                 val serviceIntent = Intent(tmpContext, AlarmService::class.java).apply {
                     putExtra(ALARM_STATE, ON)
-                    putExtra(REMIND_IDX, remindIdx as Int)
+                    putExtra(SELECTED_REMIND_IDX, remindIdx as Int)
                 }
                 tmpContext.startService(serviceIntent)
-                println("Result intent is called")
             }
         }
     }
