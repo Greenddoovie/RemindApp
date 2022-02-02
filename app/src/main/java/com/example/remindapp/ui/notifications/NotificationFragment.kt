@@ -103,7 +103,7 @@ class NotificationFragment : Fragment() {
     fun dismissOnClick() {
         if (bound) {
             alarmService.stopService()
-            notificationViewModel.update()
+            notificationViewModel.updateActiveToFalse()
         }
         findNavController().popBackStack()
     }

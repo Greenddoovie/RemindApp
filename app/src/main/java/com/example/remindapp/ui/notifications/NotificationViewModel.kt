@@ -22,7 +22,7 @@ class NotificationViewModel(private val repo: IRemindRepo) : ViewModel() {
         }
     }
 
-    fun update() {
+    fun updateActiveToFalse() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val tmp = _remind.value ?: return@withContext
