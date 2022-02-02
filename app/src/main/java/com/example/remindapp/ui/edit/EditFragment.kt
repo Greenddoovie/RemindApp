@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +24,7 @@ import com.example.remindapp.databinding.FragmentEditBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.util.SELECTION
+import com.example.remindapp.util.*
 
 class EditFragment : Fragment() {
 
@@ -120,6 +121,10 @@ class EditFragment : Fragment() {
     private fun setObservers() {
         editViewModel.alarmSaved.observe(viewLifecycleOwner, { saved ->
             if (saved) {
+                val remind = editViewModel.remind.value
+                remind?.let {
+                    RemindManager.setPendingRemind(requireContext().applicationContext, it)
+                }
                 findNavController().popBackStack()
             }
         })

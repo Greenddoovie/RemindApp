@@ -37,6 +37,7 @@ object RemindManager {
         if (curMillis == -1L) return
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, curMillis, pending)
+        println("Result ${remind}, Result idx: ${remind.id}")
     }
 
     private fun checkRemindAlarmOnNextDayOrNot(remind: Remind): Boolean {

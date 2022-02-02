@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
@@ -46,10 +47,6 @@ class HomeFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewmodel = homeViewModel
         setAdapters()
-    }
-
-    override fun onStart() {
-        super.onStart()
         fetchRemindList()
     }
 
