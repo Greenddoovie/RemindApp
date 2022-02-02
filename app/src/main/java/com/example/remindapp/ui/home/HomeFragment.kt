@@ -8,6 +8,7 @@ import android.widget.CheckBox
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.remindapp.R
 import com.example.remindapp.databinding.FragmentHomeBinding
@@ -16,6 +17,7 @@ import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
 import com.example.remindapp.util.RemindManager
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -44,11 +46,27 @@ class HomeFragment : Fragment() {
         binding.viewmodel = homeViewModel
         setAdapters()
         fetchRemindList()
+        observeRemindItemChange()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        parentFragmentManager.clearFragmentResultListener(RESULT_KEY_CHECK_CHANGE)
+    }
+
+    private fun observeRemindItemChange() {
+        parentFragmentManager.setFragmentResultListener(
+            RESULT_KEY_CHECK_CHANGE,
+            viewLifecycleOwner
+        ) {_, result ->
+            val idx = result.getInt(BUNDLE_KEY_IDX)
+            lifecycleScope.launch {
+                homeViewModel.getRemind(idx)?.let {
+                    setPendingRemind(it)
+                }
+            }
+        }
     }
 
     fun clickRemindButton() {
@@ -94,6 +112,8 @@ class HomeFragment : Fragment() {
 
     companion object {
         const val SELECTION = "selection"
+        const val RESULT_KEY_CHECK_CHANGE = "NotificationChange"
+        const val BUNDLE_KEY_IDX = "RemindIdx"
     }
 
 }
