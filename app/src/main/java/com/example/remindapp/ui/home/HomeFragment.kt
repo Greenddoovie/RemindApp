@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +18,7 @@ import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import com.example.remindapp.model.room.RemindDatabase
+import com.example.remindapp.ui.home.model.RemindItem
 import com.example.remindapp.util.RemindManager
 import kotlinx.coroutines.launch
 
@@ -49,9 +52,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.fragment = this
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewmodel = homeViewModel
         setAdapters()
         fetchRemindList()
+        setObserver()
         observeRemindItemChange()
     }
 
@@ -79,27 +82,32 @@ class HomeFragment : Fragment() {
         findNavController().navigate(R.id.action_navigation_home_to_navigation_edit)
     }
 
-    private fun setAdapters() {
-        remindAdapter = RemindAdapter(
-            object : RemindAdapter.RemindItemClickListener {
-                override fun onClick(itemIdx: Int) {
-                    Bundle().let {
-                        it.putInt(SELECTION, itemIdx)
-                        findNavController().navigate(
-                            R.id.action_navigation_home_to_navigation_edit,
-                            it
-                        )
-                    }
-                }
-            },
-            object : RemindAdapter.CheckBoxClickListener {
-                override fun onClick(view: View, item: Remind) {
-                    val tmpView = view as CheckBox
-                    if (tmpView.isChecked) setPendingRemind(item) else cancelRemind(item)
-                    homeViewModel.update(item, tmpView.isChecked)
-                }
-            }
+    private fun setObserver() {
+        homeViewModel.reminds.observe(viewLifecycleOwner, { remindList ->
+            binding.remindItemList = remindList.map { remind -> RemindItem.from(remind, ::clickItem, ::clickCheckBox)}
+            binding.executePendingBindings()
+        })
+    }
+
+    private fun clickItem(remindItem: RemindItem) {
+        findNavController().navigate(
+            R.id.action_navigation_home_to_navigation_edit,
+            bundleOf(SELECTION to remindItem.id)
         )
+    }
+
+    private fun clickCheckBox(remindItem: RemindItem) {
+        val adapterPosition = remindAdapter.currentList.indexOf(remindItem)
+        val vh = binding.containerRemindItem.findViewHolderForAdapterPosition(adapterPosition) ?: return
+        val checkBox = vh.itemView.findViewById<AppCompatCheckBox>(R.id.cb_active)
+
+        val remind = RemindItem.to(remindItem)
+        if (checkBox.isChecked) setPendingRemind(remind) else cancelRemind(remind)
+        homeViewModel.update(remind, checkBox.isChecked)
+    }
+
+    private fun setAdapters() {
+        remindAdapter = RemindAdapter()
         binding.containerRemindItem.adapter = remindAdapter
     }
 
