@@ -37,6 +37,7 @@ class AlarmService : Service() {
                 mediaPlayer = MediaPlayer.create(applicationContext, remind.uri.toUri())
                 mediaPlayer.start()
                 mediaPlayer.isLooping = true
+                mediaPlayer.setVolume(1.0F, 1.0F)
 
                 withContext(Dispatchers.Main) {
                     Intent(applicationContext, MainActivity::class.java).run {
