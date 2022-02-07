@@ -1,5 +1,5 @@
 # RemindApp
-1차 기간: 2022년 1월 24일 ~ 1월 27일
+1차 개발기간: 2022년 1월 24일 ~ 1월 27일
 
 2차 리팩토링: 2022년 2월 1일 ~ 2월 3일
 
@@ -7,6 +7,8 @@
 
 ### 프로젝트 시작 이유
 1. Broadcast Receiver와 Service를 공부하기 위해 진행한 Toy Project
+
+---
 
 ### 얻은 점
 1. Broadcast Receiver와 Alarm Manager를 통한 정확한 시간에 알람 울리는 방법
@@ -22,6 +24,8 @@
 5. Databinding의 사용 방법에 대한 이해도 살짝 향상
 6. 의도를 더욱 드러나는 Naming을 사용할 것
 
+---
+
 
 ### 메인화면
 <img src="https://user-images.githubusercontent.com/75981415/152740578-d96369f3-0f0d-4c56-8781-ebf706e6e1aa.jpg"  width="200" height="400"/>
@@ -32,6 +36,8 @@
 4. 목록의 remind 클릭 시 Remind 수정화면 이동
 5. 변경 및 추가된 Remind에 대한 알람 등록
 
+
+---
 
 ### 설정 화면
 |  화면 1 |  화면 2 |
@@ -51,6 +57,8 @@
     2. 불러왔을 때, 해당 item의 id를 fragment result로 set
     3. 이후 popBackStack을 통해 메인화면으로 이동
 
+---
+
 ### 리마인드 알림 화면
 <img src="https://user-images.githubusercontent.com/75981415/152740647-cf7bf1ec-c63e-4a0e-8dda-8c8383b45570.jpg"  width="200" height="400"/>
 
@@ -66,12 +74,16 @@
     1. 현재 Remind의 활성 상태를 inactive로 변경
     2. 메인 화면으로 이동
 
+---
+
 ### Room Entity
 **Remind 테이블**
 | id | title | hour | minute | url | active |
 | --- | --- | --- | --- | --- | --- |
 |     |     |     |     |     |     |
 1. 고려사항: id를 외부에서 주입하면, 설정화면에서 save button 클릭 후 다시 fetch하는 과정을 줄이기 가능
+
+---
 
 ### Alarm Receiver
 1. 재 부팅시 Active 상태의 Remind를 Alarm Manager를 통한 등록 역할
@@ -85,6 +97,7 @@
     1. Service 실행
     2. 궁금증: Service로 바로 실행하는 건 어떤가?
 
+---
 
 ### Alarm Service
 1. Remind Id를 이용해 service에서 remind item 로드
@@ -96,6 +109,8 @@
 7. 개선점: boundService이므로 비동기작업을 fragment에서 진행하고 uri를 건네주는 방식으로 media 실행하게 하도록 변경
     1. 이유: bound fragment에서도 비동기작업 진행 중
 
+
+---
 
 ### Remind Item Data Class
 #### 메인화면에서 사용되는 RecyclerView Item Class
