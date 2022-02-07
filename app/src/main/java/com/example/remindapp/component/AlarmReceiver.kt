@@ -1,14 +1,19 @@
 package com.example.remindapp.component
 
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.remindapp.component.AlarmService.Companion.ALARM_STATE
+import com.example.remindapp.component.AlarmService.Companion.OFF
+import com.example.remindapp.component.AlarmService.Companion.ON
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
-import com.example.remindapp.ui.home.HomeFragment
-import com.example.remindapp.util.setAlarm
+import com.example.remindapp.util.SELECTED_REMIND_IDX
+import com.example.remindapp.util.RemindManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -16,32 +21,27 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent == null) return
         val action = intent.action
 
-        context?.let {
-            if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-                val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(it.applicationContext)))
-                val reminds = repo.getAll()
-                cancelAlarm(it.applicationContext)
-                setAlarm(reminds, it.applicationContext)
-            } else {
-                val remindIdx = intent?.extras?.get("remindIdx") ?: -1
-
-                val serviceIntent = Intent(it, AlarmService::class.java).apply {
-                    putExtra("alarm", "on")
-                    putExtra("remindIdx", remindIdx as Int)
+        context?.let { tmpContext ->
+            val remindIdx = intent.extras?.get(SELECTED_REMIND_IDX) ?: OFF
+            if (Intent.ACTION_BOOT_COMPLETED == action || Intent.ACTION_LOCKED_BOOT_COMPLETED == action) {
+                val result = goAsync()
+                GlobalScope.launch(Dispatchers.IO) {
+                    val repo = RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(tmpContext.applicationContext)))
+                    repo.getAll().forEach { remind ->
+                        if (remind.active) {
+                            RemindManager.setPendingRemind(tmpContext, remind)
+                        }
+                    }
+                    result.finish()
                 }
-
-                it.startService(serviceIntent)
+            } else {
+                if (remindIdx == OFF) return
+                val serviceIntent = Intent(tmpContext, AlarmService::class.java).apply {
+                    putExtra(ALARM_STATE, ON)
+                    putExtra(SELECTED_REMIND_IDX, remindIdx as Int)
+                }
+                tmpContext.startService(serviceIntent)
             }
         }
-    }
-
-    private fun cancelAlarm(context: Context) {
-        val pending = PendingIntent.getBroadcast(
-            context,
-            HomeFragment.ALARM_REQUEST_CODE,
-            Intent(context, AlarmReceiver::class.java),
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        pending?.cancel()
     }
 }

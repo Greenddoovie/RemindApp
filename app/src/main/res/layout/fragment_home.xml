@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="java.util.List"/>
+        <import type="com.example.remindapp.ui.home.model.RemindItem" />
+
         <variable
             name="fragment"
             type="com.example.remindapp.ui.home.HomeFragment" />
         <variable
-            name="viewmodel"
-            type="com.example.remindapp.ui.home.HomeViewModel" />
+            name="RemindItemList"
+            type="List&lt;RemindItem&gt;" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,7 +48,7 @@
             app:layout_constraintTop_toBottomOf="@id/container_edit_toolbar" />
 
         <androidx.recyclerview.widget.RecyclerView
-            submitList="@{viewmodel.reminds}"
+            submitList="@{RemindItemList}"
             android:id="@+id/container_remind_item"
             android:layout_width="match_parent"
             android:layout_height="0dp"

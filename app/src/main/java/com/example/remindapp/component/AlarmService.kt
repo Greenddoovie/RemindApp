@@ -10,6 +10,7 @@ import com.example.remindapp.MainActivity
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
+import com.example.remindapp.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,10 +25,10 @@ class AlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) return START_NOT_STICKY
 
-        val idx = intent.extras?.get("remindIdx") ?: -1
-        val onOff = intent.extras?.get("alarm") ?: "off"
+        val idx = intent.extras?.get(SELECTED_REMIND_IDX) ?: -1
+        val onOff = intent.extras?.get(ALARM_STATE) ?: OFF
 
-        if (onOff == "on") {
+        if (onOff == ON) {
             repo =
                 RemindRepository(RemindLocalDatasource(RemindDatabase.getInstance(applicationContext)))
             CoroutineScope(Dispatchers.IO).launch {
@@ -38,11 +39,11 @@ class AlarmService : Service() {
                 mediaPlayer.isLooping = true
 
                 withContext(Dispatchers.Main) {
-                    val activityIntent = Intent(applicationContext, MainActivity::class.java)
-                    activityIntent.putExtra("remindIdx", remind.id)
-                    activityIntent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    applicationContext.startActivity(activityIntent)
+                    Intent(applicationContext, MainActivity::class.java).run {
+                        putExtra(SELECTED_REMIND_IDX, remind.id)
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        applicationContext.startActivity(this)
+                    }
                 }
             }
             return START_NOT_STICKY
@@ -66,6 +67,12 @@ class AlarmService : Service() {
 
     inner class AlarmBinder : Binder() {
         fun getService(): AlarmService = this@AlarmService
+    }
+
+    companion object {
+        const val ALARM_STATE = "alarm"
+        const val ON = 1
+        const val OFF = 0
     }
 
 }

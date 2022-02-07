@@ -9,5 +9,6 @@ interface IRemindRepo {
     fun update(remind: Remind)
     fun update(title: String, hour: Int, minute: Int, uri: String, active: Boolean, id: Int)
     fun getRemind(idx: Int): Remind
+    fun getRemind(title: String, hour: Int, minute: Int, uri: String): Remind
 
 }

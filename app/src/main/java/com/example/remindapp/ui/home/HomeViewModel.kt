@@ -5,6 +5,7 @@ import com.example.remindapp.model.repository.IRemindRepo
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.Remind
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -13,8 +14,10 @@ class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
     private var _reminds = MutableLiveData<List<Remind>>()
     val reminds: LiveData<List<Remind>> get() = _reminds
 
+    private lateinit var job: Job
+
     fun fetchReminds() {
-        viewModelScope.launch {
+        job = viewModelScope.launch {
             val remindList = withContext(Dispatchers.IO) {
                 remindRepository.getAll()
             }
@@ -35,6 +38,15 @@ class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
                 )
             }
             fetchReminds()
+        }
+    }
+
+    suspend fun getRemind(idx: Int): Remind? {
+        return withContext(Dispatchers.IO) {
+            job.join()
+            reminds.value?.let { remindList ->
+                remindList.find { it.id == idx }
+            }
         }
     }
 

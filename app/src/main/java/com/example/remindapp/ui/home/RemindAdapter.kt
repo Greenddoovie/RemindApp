@@ -9,11 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.remindapp.R
 import com.example.remindapp.databinding.ItemRemindMainFragmentBinding
 import com.example.remindapp.model.room.Remind
+import com.example.remindapp.ui.home.model.RemindItem
 
-class RemindAdapter(
-    private val remindItemClickListener: RemindItemClickListener,
-    private val checkboxListener: CheckBoxClickListener
-) : ListAdapter<Remind, RecyclerView.ViewHolder>(RemindItemCallback()) {
+class RemindAdapter : ListAdapter<RemindItem, RecyclerView.ViewHolder>(RemindItem.diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return RemindViewHolder(
@@ -22,47 +20,21 @@ class RemindAdapter(
                 R.layout.item_remind_main_fragment,
                 parent,
                 false
-            ),
-            remindItemClickListener,
-            checkboxListener
+            )
         )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is RemindViewHolder -> {
-                holder.bind(getItem(position))
+                holder.binding.remindItem = getItem(position)
+                holder.binding.executePendingBindings()
             }
         }
-    }
-
-    interface RemindItemClickListener {
-        fun onClick(itemIdx: Int) {}
-    }
-
-    interface CheckBoxClickListener {
-        fun onClick(view: View, item: Remind) {}
     }
 
     class RemindViewHolder(
-        private val binding: ItemRemindMainFragmentBinding,
-        private val clickListener: RemindItemClickListener,
-        private val checkboxListener: CheckBoxClickListener
-    ) : RecyclerView.ViewHolder(binding.root) {
-        lateinit var item: Remind
+        val binding: ItemRemindMainFragmentBinding
+    ) : RecyclerView.ViewHolder(binding.root)
 
-        init {
-            binding.root.setOnClickListener {
-                clickListener.onClick(item.id)
-            }
-            binding.cbActive.setOnClickListener {
-                checkboxListener.onClick(binding.cbActive, item)
-            }
-        }
-
-        fun bind(item: Remind) {
-            binding.remind = item
-            this.item = item
-        }
-    }
 }

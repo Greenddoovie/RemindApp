@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,10 @@ import com.example.remindapp.databinding.FragmentEditBinding
 import com.example.remindapp.model.repository.RemindLocalDatasource
 import com.example.remindapp.model.repository.RemindRepository
 import com.example.remindapp.model.room.RemindDatabase
+import com.example.remindapp.ui.home.HomeFragment.Companion.BUNDLE_KEY_IDX
+import com.example.remindapp.ui.home.HomeFragment.Companion.RESULT_KEY_CHECK_CHANGE
+import com.example.remindapp.ui.home.HomeFragment.Companion.SELECTION
+import com.example.remindapp.util.*
 
 class EditFragment : Fragment() {
 
@@ -70,7 +75,7 @@ class EditFragment : Fragment() {
         setTouchListener()
         setObservers()
 
-        val idx = arguments?.get("selection") as Int// -1 이면 추가
+        val idx = arguments?.get(SELECTION) as Int// -1 이면 추가
         fetchRemind(idx)
     }
 
@@ -119,6 +124,13 @@ class EditFragment : Fragment() {
     private fun setObservers() {
         editViewModel.alarmSaved.observe(viewLifecycleOwner, { saved ->
             if (saved) {
+                val remind = editViewModel.remind.value
+                remind?.let {
+                    parentFragmentManager.setFragmentResult(
+                        RESULT_KEY_CHECK_CHANGE,
+                        bundleOf(BUNDLE_KEY_IDX to it.id)
+                    )
+                }
                 findNavController().popBackStack()
             }
         })
@@ -140,4 +152,5 @@ class EditFragment : Fragment() {
         val ringtone = RingtoneManager.getRingtone(requireContext(), uri.toUri())
         return ringtone.getTitle(requireContext())
     }
+
 }
