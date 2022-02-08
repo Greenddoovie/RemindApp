@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import com.example.remindapp.databinding.ActivityMainBinding
@@ -41,27 +42,38 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(binding.root)
-
         checkPermission()
+        deliverIdxIfRemindOn()
+        turnOnScreenAndKeepOn()
+    }
+
+    private fun deliverIdxIfRemindOn() {
         val idx = intent?.extras?.get(SELECTED_REMIND_IDX)
 
         if (idx != null) {
             val id = idx as Int
-            val bundle = Bundle()
-            bundle.putInt(SELECTED_REMIND_IDX, id)
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
             val navController = navHostFragment.navController
-            navController.navigate(R.id.action_navigation_home_to_navigation_notifications, bundle)
+            navController.navigate(
+                R.id.action_navigation_home_to_navigation_notifications, bundleOf(
+                    SELECTED_REMIND_IDX to id
+                )
+            )
         }
+    }
+
+    private fun turnOnScreenAndKeepOn() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-        } else{
-            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+        } else {
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
         }
     }
 }
