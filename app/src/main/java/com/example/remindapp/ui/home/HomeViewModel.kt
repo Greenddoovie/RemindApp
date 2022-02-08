@@ -29,12 +29,12 @@ class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 remindRepository.update(
-                    item.title,
-                    item.hour,
-                    item.minute,
-                    item.uri,
-                    checked,
-                    item.id
+                    title = item.title,
+                    hour = item.hour,
+                    minute = item.minute,
+                    uri = item.uri,
+                    active = checked,
+                    id = item.id
                 )
             }
             fetchReminds()
