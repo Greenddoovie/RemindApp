@@ -12,13 +12,13 @@ import kotlinx.coroutines.withContext
 
 class EditViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
 
-    private var _alarmSaved = SingleLiveEvent<Boolean>()
+    private val _alarmSaved = SingleLiveEvent<Boolean>()
     val alarmSaved get() = _alarmSaved
 
-    private var _remind = MutableLiveData<Remind>()
+    private val _remind = MutableLiveData<Remind>()
     val remind: LiveData<Remind> get() = _remind
 
-    private var _uri = MutableLiveData<String>()
+    private val _uri = MutableLiveData<String>()
     val uri: LiveData<String> get() = _uri
 
     fun saveAlarm(title: String, hour: Int, minute: Int) {

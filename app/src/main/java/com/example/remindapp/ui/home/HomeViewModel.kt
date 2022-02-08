@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 
 class HomeViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
 
-    private var _reminds = MutableLiveData<List<Remind>>()
+    private val _reminds = MutableLiveData<List<Remind>>()
     val reminds: LiveData<List<Remind>> get() = _reminds
 
     private lateinit var job: Job

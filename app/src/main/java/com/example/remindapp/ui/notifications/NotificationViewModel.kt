@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 
 class NotificationViewModel(private val repo: IRemindRepo) : ViewModel() {
 
-    private var _remind = SingleLiveEvent<Remind>()
+    private val _remind = SingleLiveEvent<Remind>()
     val remind get() = _remind
 
     fun fetchRemind(id: Int) {
