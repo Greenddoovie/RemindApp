@@ -47,18 +47,6 @@ object RemindManager {
         return if (remind.hour < curHour) { true } else remind.hour == curHour && remind.minute <= curMin
     }
 
-    private fun getCurrentTime(): List<Int> {
-        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()).split(":").map { it.toInt() }
-    }
-
-    private fun getCurrentDay(): String {
-        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-    }
-
-    private fun getTargetTime(hour: Int, minute: Int): String {
-        return "$hour:$minute:00"
-    }
-
     private fun convertDateToMillis(hour: Int, minute: Int, flag: Boolean): Long {
         val date = convertTime(hour, minute)
         val pattern = "yyyy-MM-dd HH:mm:ss"
@@ -72,9 +60,16 @@ object RemindManager {
         return if(flag) result + DAY_MILLIS else result
     }
 
-    private fun convertTime(hour: Int, minute: Int): String {
-        return "${getCurrentDay()} ${getTargetTime(hour, minute)}"
-    }
+    private fun getCurrentTime() =
+        SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()).split(":").map { it.toInt() }
+
+    private fun getCurrentDay() =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+    private fun getTargetTime(hour: Int, minute: Int) = "$hour:$minute:00"
+
+    private fun convertTime(hour: Int, minute: Int): String =
+        "${getCurrentDay()} ${getTargetTime(hour, minute)}"
 
     private const val DAY_MILLIS = 86400000L
 }
