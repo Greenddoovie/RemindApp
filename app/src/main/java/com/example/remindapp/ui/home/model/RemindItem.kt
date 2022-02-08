@@ -14,12 +14,8 @@ data class RemindItem(
     val onCheckBoxClick: (RemindItem) -> Unit
 ) {
 
-    fun convertTime(): String {
-        val hourStr = if (hour < 10) "0$hour" else "$hour"
-        val minuteStr = if (minute < 10) "0$minute" else "$minute"
-        val apm = if (hour >= 12) "PM" else "AM"
-        return "$hourStr:$minuteStr $apm"
-    }
+    fun convertTime() =
+        "${if (hour < 10) "0$hour" else "$hour"}:${if (minute < 10) "0$minute" else "$minute"} ${if (hour >= 12) "PM" else "AM"}"
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<RemindItem>() {

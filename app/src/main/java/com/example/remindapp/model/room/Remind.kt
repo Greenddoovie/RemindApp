@@ -11,12 +11,10 @@ data class Remind(
     val uri: String,
     val active: Boolean
 ) {
-    @PrimaryKey(autoGenerate = true) var id: Int = 0
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 
-    fun convertTime(): String {
-        val hourStr = if (hour < 10) "0$hour" else "$hour"
-        val minuteStr = if (minute < 10) "0$minute" else "$minute"
-        val apm = if (hour >= 12) "PM" else "AM"
-        return "$hourStr:$minuteStr $apm"
-    }
+    fun convertTime() =
+        "${if (hour < 10) "0$hour" else "$hour"}:${if (minute < 10) "0$minute" else "$minute"} ${if (hour >= 12) "PM" else "AM"}"
+
 }
