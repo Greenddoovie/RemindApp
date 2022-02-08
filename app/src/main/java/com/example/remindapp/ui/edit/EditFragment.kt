@@ -84,15 +84,11 @@ class EditFragment : Fragment() {
         _binding = null
     }
 
-    private fun fetchRemind(idx: Int) {
-        editViewModel.fetchRemind(idx)
-    }
+    private fun fetchRemind(idx: Int) = editViewModel.fetchRemind(idx)
 
-    private fun setTouchListener() {
-        binding.root.setOnTouchListener { _, _ ->
-            hideKeyboard()
-            false
-        }
+    private fun setTouchListener() = binding.root.setOnTouchListener { _, _ ->
+        hideKeyboard()
+        false
     }
 
     fun saveRemindButton() {
