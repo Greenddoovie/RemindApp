@@ -18,11 +18,10 @@ class EditViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
     private val _remind = MutableLiveData<Remind>()
     val remind: LiveData<Remind> get() = _remind
 
-    private val _uri = MutableLiveData<String>()
-    val uri: LiveData<String> get() = _uri
+    private lateinit var uri: String
 
     fun saveAlarm(title: String, hour: Int, minute: Int) {
-        val uri = uri.value!!
+        val uri = uri
         viewModelScope.launch {
             val newRemind = withContext(Dispatchers.IO) {
                 val tmpRemind = remind.value
@@ -49,12 +48,12 @@ class EditViewModel(private val remindRepository: IRemindRepo) : ViewModel() {
                 remindRepository.getRemind(idx)
             }
             _remind.value = tmpRemind
-            _uri.value = tmpRemind.uri
+            uri = tmpRemind.uri
         }
     }
 
     fun setUri(uri: String) {
-        _uri.value = uri
+        this.uri = uri
     }
 
     class EditViewModelFactory(private val remindRepository: RemindRepository) :
