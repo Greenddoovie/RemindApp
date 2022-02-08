@@ -84,21 +84,21 @@ class HomeFragment : Fragment() {
 
     private fun setObserver() {
         homeViewModel.reminds.observe(viewLifecycleOwner, { remindList ->
-            binding.remindItemList = remindList.map { remind -> RemindItem.from(remind, ::clickItem, ::clickCheckBox)}
+            binding.remindItemList =
+                remindList.map { remind -> RemindItem.from(remind, ::clickItem, ::clickCheckBox) }
             binding.executePendingBindings()
         })
     }
 
-    private fun clickItem(remindItem: RemindItem) {
-        findNavController().navigate(
-            R.id.action_navigation_home_to_navigation_edit,
-            bundleOf(SELECTION to remindItem.id)
-        )
-    }
+    private fun clickItem(remindItem: RemindItem) = findNavController().navigate(
+        R.id.action_navigation_home_to_navigation_edit,
+        bundleOf(SELECTION to remindItem.id)
+    )
 
     private fun clickCheckBox(remindItem: RemindItem) {
         val adapterPosition = remindAdapter.currentList.indexOf(remindItem)
-        val vh = binding.containerRemindItem.findViewHolderForAdapterPosition(adapterPosition) ?: return
+        val vh =
+            binding.containerRemindItem.findViewHolderForAdapterPosition(adapterPosition) ?: return
         val checkBox = vh.itemView.findViewById<AppCompatCheckBox>(R.id.cb_active)
 
         val remind = RemindItem.to(remindItem)
@@ -111,9 +111,7 @@ class HomeFragment : Fragment() {
         binding.containerRemindItem.adapter = remindAdapter
     }
 
-    private fun fetchRemindList() {
-        homeViewModel.fetchReminds()
-    }
+    private fun fetchRemindList() = homeViewModel.fetchReminds()
 
     private fun cancelRemind(remind: Remind) {
         context?.let { it ->
