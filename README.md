@@ -190,3 +190,13 @@ data class RemindItem(
     2. from, To 함수 추가 
         - convert RemindItem from Remind
         - convert RemindItem to Remind
+
+
+---
+
+## Android 12 동작 변경사항
+[Notification Trampolines](https://developer.android.com/about/versions/12/behavior-changes-12#notification-trampolines)
+
+앱 내에서 알림이 activity를 실행하지 않아 문제가 있진 않지만, 추후에 앱을 개발할 때 알림과 관련된 작업에서 주의해야할 점으로 Android12에서 적용된 Notification Trampolines 제한 이슈를 고려해야한다.
+
+> Notificataion Trampolines: 알림과 상호작용을 통해 activity가 시작하게끔 하는 app의 component를 notification trampolines이라 부른다. 즉 boradcast receiver or service
